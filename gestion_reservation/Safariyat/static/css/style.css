@@ -1,0 +1,113 @@
+/* Formulaire stylisé */
+form {
+    background-color: #f8f9fa; /* Couleur de fond claire */
+    border-radius: 10px; /* Coins arrondis */
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Ombre douce */
+}
+
+/* Champs de formulaire */
+form .form-control {
+    border-radius: 5px;
+    border: 1px solid #ced4da;
+    box-shadow: none;
+}
+
+/* Champs de formulaire au focus */
+form .form-control:focus {
+    border-color: #007bff; /* Couleur du focus */
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+/* Bouton de soumission */
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004085;
+}
+
+/* Taille du titre */
+h2 {
+    font-size: 2rem;
+}
+
+/* Espacement entre les éléments */
+.mb-3 {
+    margin-bottom: 1.5rem;
+}
+
+/* Texte centré */
+.text-center {
+    text-align: center;
+}
+
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+    .card, .card * {
+        visibility: visible;
+    }
+    .card {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        border: none !important;
+    }
+    .btn, .alert {
+        display: none !important;
+    }
+}
+
+/* Styles existants... */
+
+/* Styles pour la page d'historique */
+.history-card {
+    transition: all 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.history-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.history-card .card-header {
+    font-weight: bold;
+}
+
+.history-card .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.7rem;
+}
+
+.nav-tabs .nav-link {
+    font-weight: 500;
+    color: #495057;
+}
+
+.nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom: 2px solid #0d6efd;
+}
+
+.empty-history {
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+}
+
+.empty-history i {
+    font-size: 3rem;
+    color: #6c757d;
+    margin-bottom: 20px;
+}

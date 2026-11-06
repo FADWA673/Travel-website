@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Programme de Fidélité - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- En-tête de la page -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <h1 class="fw-bold mb-2">
+                <i class="bi bi-award text-primary me-2"></i>Programme de Fidélité
+            </h1>
+            <p class="lead text-muted">Découvrez vos avantages et récompenses en tant que client fidèle.</p>
+            <hr>
+        </div>
+    </div>
+
+    <!-- Informations de fidélité -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Votre profil de fidélité</h2>
+                    
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="me-3">
+                            {% if fidelite.niveau == 'bronze' %}
+                                <span class="badge bg-warning text-dark">Bronze</span>
+                            {% elif fidelite.niveau == 'argent' %}
+                                <span class="badge bg-secondary">Argent</span>
+                            {% elif fidelite.niveau == 'or' %}
+                                <span class="badge bg-warning">Or</span>
+                            {% else %}
+                                <span class="badge bg-info">Platine</span>
+                            {% endif %}
+                        </div>
+                        <div>
+                            <h3 class="h5 mb-0">{{ fidelite.points }} points</h3>
+                            <small class="text-muted">Membre depuis {{ fidelite.date_inscription|date:"d/m/Y" }}</small>
+                        </div>
+                    </div>
+                    
+                    <p>Vous bénéficiez actuellement d'une réduction de <strong>{{ reduction }}%</strong> sur vos prochaines réservations.</p>
+                    
+                    <!-- Barre de progression -->
+                    <h4 class="h6 mb-2">Progression vers le niveau suivant</h4>
+                    <div class="progress mb-2" style="position: relative;">
+                        <div class="progress-bar 
+                            {% if fidelite.niveau == 'bronze' %}bg-warning
+                            {% elif fidelite.niveau == 'argent' %}bg-secondary
+                            {% elif fidelite.niveau == 'or' %}bg-warning
+                            {% else %}bg-info{% endif %}" 
+                            role="progressbar" 
+                            style="width: 0%;"
+                            aria-valuenow="{{ pourcentage }}" 
+                            aria-valuemin="0" 
+                            aria-valuemax="100">
+                        </div>
+                        <div class="progress-bar-overlay" data-width="{{ pourcentage }}"></div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <small>{{ fidelite.points }} points</small>
+                        {% if fidelite.niveau == 'bronze' %}
+                            <small>200 points (Argent)</small>
+                        {% elif fidelite.niveau == 'argent' %}
+                            <small>500 points (Or)</small>
+                        {% elif fidelite.niveau == 'or' %}
+                            <small>1000 points (Platine)</small>
+                        {% else %}
+                            <small>Niveau maximum atteint</small>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- MODIFICATION: Le cadre de félicitations est maintenant toujours affiché -->
+                    <div class="alert alert-success mt-3">
+                        <h4 class="alert-heading">Félicitations !</h4>
+                        <p>Vous avez atteint <strong>500 points</strong> et gagné une réservation gratuite !</p>
+                        <a href="{% url 'choix_transport' %}" class="btn btn-sm btn-success">
+                            <i class="bi bi-ticket-perforated me-1"></i>Utiliser ma réservation gratuite
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm border-0 h-100">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Vos statistiques</h2>
+                    
+                    <p>Total des réservations : <strong>{{ total_reservations }}</strong></p>
+                    
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Réservations de taxi
+                            <span class="badge bg-success rounded-pill">{{ reservations_taxi.count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Réservations de bus
+                            <span class="badge bg-info rounded-pill">{{ reservations_bus.count }}</span>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            Réservations de train
+                            <span class="badge bg-warning text-dark rounded-pill">{{ reservations_train.count }}</span>
+                        </li>
+                    </ul>
+                    
+                    <div class="mt-3">
+                        <a href="{% url 'choix_transport' %}" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Faire une nouvelle réservation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Le reste du code reste inchangé -->
+    <!-- Avantages du programme -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h2 class="h4 mb-3">Avantages du programme</h2>
+                    
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-header bg-warning text-dark">Bronze</div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>5% de réduction</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Service client prioritaire</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer bg-light">0-199 points</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-header bg-secondary text-white">Argent</div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>10% de réduction</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Annulation gratuite</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer bg-light">200-499 points</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-header bg-warning text-dark">Or</div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>15% de réduction</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>1 réservation gratuite</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer bg-light">500-999 points</div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="card mb-3">
+                                <div class="card-header bg-info text-white">Platine</div>
+                                <div class="card-body">
+                                    <ul class="list-unstyled mb-0">
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>20% de réduction</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>1 réservation gratuite</li>
+                                        <li><i class="bi bi-check-circle-fill text-success me-2"></i>Surclassement prioritaire</li>
+                                    </ul>
+                                </div>
+                                <div class="card-footer bg-light">1000+ points</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Historique des réservations reste inchangé -->
+    <!-- ... Le reste du code est identique ... -->
+</div>
+
+<style>
+    .progress {
+        position: relative;
+        height: 20px;
+    }
+    .progress-bar {
+        height: 100%;
+    }
+    .progress-bar-overlay {
+        background-color: #28a745;
+        height: 2px;
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Mise à jour des barres de progression
+        var overlays = document.querySelectorAll('.progress-bar-overlay');
+        overlays.forEach(function(overlay) {
+            var width = overlay.getAttribute('data-width');
+            overlay.style.width = width + '%';
+        });
+    });
+</script>
+
+{% endblock %}

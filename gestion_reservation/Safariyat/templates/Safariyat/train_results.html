@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Résultats de recherche - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4 shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="card-title h5 mb-0">Votre recherche</h2>
+                </div>
+                <div class="card-body">
+                    <p><strong>Départ:</strong> {{ search_params.depart }}</p>
+                    <p><strong>Destination:</strong> {{ search_params.destination }}</p>
+                    <p><strong>Date:</strong> {{ search_params.date|date:"d/m/Y" }}</p>
+                    <p><strong>Heure:</strong> {{ search_params.heure|time:"H:i" }}</p>
+                    <p><strong>Passagers:</strong> {{ search_params.nombre_passagers }}</p>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'reservation_train' %}" class="btn btn-outline-primary">Nouvelle recherche</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <h2 class="mb-3">Résultats de la recherche</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            {% if results %}
+                {% for train in results %}
+                    <div class="card mb-3 train-result shadow-sm">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-3">
+                                    <div class="train-time fs-5 fw-bold">{{ train.heure_depart }}</div>
+                                    <div class="text-muted">Départ</div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="train-time fs-5 fw-bold">{{ train.heure_arrivee }}</div>
+                                    <div class="text-muted">Arrivée</div>
+                                </div>
+                                <div class="col-md-6 text-end">
+                                    <div class="train-price fs-5 fw-bold text-success">{{ train.prix }}</div>
+                                    <div class="train-duration mb-2">Durée: {{ train.duree }}</div>
+                                    {% if train.train_type %}
+                                        <div class="badge bg-info mb-2">{{ train.train_type }}</div>
+                                    {% endif %}
+                                    <a href="{% url 'train_seats_payment' train_id=train.train_id %}" class="btn btn-sm btn-success mt-1">Voir les places</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun résultat trouvé pour votre recherche.
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+    .train-result {
+        transition: transform 0.2s;
+    }
+    .train-result:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+    }
+</style>
+{% endblock %}

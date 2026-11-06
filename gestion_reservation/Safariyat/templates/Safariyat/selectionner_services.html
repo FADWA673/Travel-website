@@ -1,0 +1,212 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sélectionner les services - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-gradient-primary text-white p-4">
+                    <h1 class="h3 mb-0 fw-bold">
+                        <i class="bi bi-list-check me-2"></i>Sélectionner les services pour votre trajet
+                    </h1>
+                    <p class="mb-0 mt-2 opacity-75">Choisissez les services qui correspondent à vos besoins</p>
+                </div>
+                
+                <div class="card-body p-4">
+                    <!-- Étapes de réservation -->
+                    <div class="d-flex justify-content-between mb-4">
+                        <div class="step completed">
+                            <div class="step-icon">
+                                <i class="bi bi-check-circle-fill"></i>
+                            </div>
+                            <div class="step-label">Détails</div>
+                        </div>
+                        <div class="step-connector active"></div>
+                        <div class="step active">
+                            <div class="step-icon">
+                                <i class="bi bi-2-circle-fill"></i>
+                            </div>
+                            <div class="step-label">Services</div>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="bi bi-3-circle"></i>
+                            </div>
+                            <div class="step-label">Confirmation</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Récapitulatif du trajet -->
+                    <div class="alert alert-info border-0 d-flex p-4 mb-4 rounded-3 bg-info bg-opacity-10">
+                        <div class="alert-icon me-3">
+                            <i class="bi bi-info-circle-fill fs-3 text-info"></i>
+                        </div>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1">Détails de votre trajet</h5>
+                            <div class="row mt-2">
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Départ:</strong> {{ porte_a_porte.adresse_depart }}</p>
+                                    <p class="mb-1"><strong>Destination:</strong> {{ porte_a_porte.adresse_destination }}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="mb-1"><strong>Date:</strong> {{ porte_a_porte.date|date:"d/m/Y" }}</p>
+                                    <p class="mb-1"><strong>Passagers:</strong> {{ porte_a_porte.nombre_passagers }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulaire de sélection des services -->
+                    <form method="post" id="services-form">
+                        {% csrf_token %}
+                        
+                        <div class="service-selection mb-4">
+                            <h4 class="service-title">
+                                <span class="service-number">1</span>
+                                <i class="bi bi-signpost-2 text-primary me-2"></i>
+                                Service pour le départ
+                            </h4>
+                            <div class="service-description mb-3">
+                                <p class="text-muted">Choisissez un service de taxi pour vous emmener au point de départ de votre trajet principal.</p>
+                            </div>
+                            <div class="service-options">
+                                <select name="service_depart" class="form-select form-select-lg">
+                                    <option value="">-- Aucun service (je m'y rendrai par mes propres moyens) --</option>
+                                    {% for service in services_taxi %}
+                                        <option value="{{ service.id }}">{{ service.nom }} - {{ service.ville }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="service-selection mb-4">
+                            <h4 class="service-title">
+                                <span class="service-number">2</span>
+                                <i class="bi bi-signpost-split text-success me-2"></i>
+                                Service principal
+                            </h4>
+                            <div class="service-description mb-3">
+                                <p class="text-muted">Choisissez le service principal pour votre trajet entre les deux villes.</p>
+                            </div>
+                            <div class="service-options">
+                                <select name="service_principal" class="form-select form-select-lg" required>
+                                    <option value="">-- Sélectionnez un service --</option>
+                                    {% for service in services_bus %}
+                                        <option value="{{ service.id }}">{{ service.nom }} - {{ service.get_type_service_display }}</option>
+                                    {% endfor %}
+                                </select>
+                                <div class="invalid-feedback">
+                                    Veuillez sélectionner un service principal.
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="service-selection mb-4">
+                            <h4 class="service-title">
+                                <span class="service-number">3</span>
+                                <i class="bi bi-signpost text-info me-2"></i>
+                                Service pour l'arrivée
+                            </h4>
+                            <div class="service-description mb-3">
+                                <p class="text-muted">Choisissez un service de taxi pour vous emmener à votre destination finale.</p>
+                            </div>
+                            <div class="service-options">
+                                <select name="service_arrivee" class="form-select form-select-lg">
+                                    <option value="">-- Aucun service (je m'y rendrai par mes propres moyens) --</option>
+                                    {% for service in services_taxi %}
+                                        <option value="{{ service.id }}">{{ service.nom }} - {{ service.ville }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <!-- Boutons d'action -->
+                        <div class="d-flex justify-content-between mt-4 pt-2">
+                            <a href="{% url 'reserver_porte_a_porte' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-arrow-left me-1"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-button">
+                                <i class="bi bi-arrow-right me-1"></i>Continuer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Conseils pour la sélection des services -->
+            <div class="card border-0 shadow-sm rounded-4 mt-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-3">
+                        <i class="bi bi-lightbulb-fill text-warning me-2"></i>Conseils pour votre trajet
+                    </h4>
+                    
+                    <div class="tips-list">
+                        <div class="tip-item d-flex mb-3">
+                            <div class="tip-icon me-3 text-primary">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5 class="h6 mb-1">Prévoyez du temps</h5>
+                                <p class="text-muted mb-0">Prévoyez suffisamment de temps entre les différents services pour éviter tout stress en cas de retard.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item d-flex mb-3">
+                            <div class="tip-icon me-3 text-success">
+                                <i class="bi bi-cash-coin"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5 class="h6 mb-1">Optimisez votre budget</h5>
+                                <p class="text-muted mb-0">Comparez les différentes options pour trouver le meilleur rapport qualité-prix selon vos besoins.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="tip-item d-flex">
+                            <div class="tip-icon me-3 text-info">
+                                <i class="bi bi-phone"></i>
+                            </div>
+                            <div class="tip-content">
+                                <h5 class="h6 mb-1">Gardez vos contacts</h5>
+                                <p class="text-muted mb-0">Notez les numéros de téléphone des services sélectionnés pour pouvoir les contacter en cas de besoin.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script pour la validation du formulaire
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('services-form');
+        const submitBtn = document.getElementById('submit-button');
+        const servicePrincipal = document.querySelector('select[name="service_principal"]');
+        
+        form.addEventListener('submit', function(event) {
+            // Vérifier si un service principal est sélectionné
+            if (!servicePrincipal.value) {
+                event.preventDefault();
+                servicePrincipal.classList.add('is-invalid');
+                servicePrincipal.focus();
+            } else {
+                // Afficher l'indicateur de chargement
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Chargement...';
+                submitBtn.disabled = true;
+            }
+        });
+        
+        // Retirer la classe d'invalidité lorsque l'utilisateur sélectionne une option
+        servicePrincipal.addEventListener('change', function() {
+            if (this.value) {
+                this.classList.remove('is-invalid');
+            }
+        });
+    });
+</script>
+{% endblock %}

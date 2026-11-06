@@ -1,0 +1,177 @@
+/* Styles communs pour les pages de transport porte-à-porte */
+
+/* Dégradés de couleur pour les en-têtes */
+.bg-gradient-primary {
+  background: linear-gradient(135deg, #0056b3, #0077cc);
+}
+
+.bg-gradient-success {
+  background: linear-gradient(135deg, #198754, #20c997);
+}
+
+/* Styles des étapes de réservation */
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 1;
+  position: relative;
+}
+
+.step-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: #6c757d;
+}
+
+.step.active .step-icon {
+  color: #0056b3;
+}
+
+.step.completed .step-icon {
+  color: #198754;
+}
+
+.step-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #6c757d;
+}
+
+.step.active .step-label {
+  color: #0056b3;
+  font-weight: 600;
+}
+
+.step.completed .step-label {
+  color: #198754;
+}
+
+.step-connector {
+  flex-grow: 1;
+  height: 2px;
+  background-color: #061f38;
+  margin-top: 20px;
+}
+
+.step-connector.active {
+  background-color: #0056b3;
+}
+
+/* Styles des icônes de fonctionnalités */
+.feature-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+}
+
+/* Styles des options de transport */
+.custom-option {
+  padding: 0.5rem 1rem;
+  border: 1px solid #0a1d30;
+  border-radius: 0.5rem;
+  margin-right: 0.5rem;
+  transition: all 0.2s ease;
+}
+
+.custom-option:hover {
+  background-color: #081c30;
+}
+
+.form-check-input:checked + .form-check-label {
+  font-weight: 500;
+}
+
+.form-check-input:checked ~ .custom-option {
+  border-color: #0056b3;
+  background-color: rgba(0, 86, 179, 0.05);
+}
+
+/* Styles des contrôles de formulaire */
+.form-control:focus,
+.form-select:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 0 0.25rem rgba(0, 86, 179, 0.25);
+}
+
+/* Styles des sections de service */
+.service-selection {
+  background-color: #06203a;
+  border-radius: 1rem;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.service-selection:hover {
+  background-color: #0d056c;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.05);
+}
+
+.service-title {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+.service-number {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background-color: #0056b3;
+  color: rgb(255, 255, 255);
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  font-size: 1rem;
+}
+
+/* Styles des cartes de service */
+.service-card {
+  transition: all 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+}
+
+.service-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Styles pour la page de confirmation */
+.confirmation-section {
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  margin-bottom: 1rem;
+  font-weight: 600;
+}
+
+/* Ajustements responsifs */
+@media (max-width: 768px) {
+  .step-label {
+    font-size: 0.75rem;
+  }
+
+  .step-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 1rem;
+  }
+}

@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Résultats de recherche de bus{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="mb-4">Résultats de recherche de bus</h1>
+
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Détails de votre recherche</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Départ:</strong> {{ depart }}</p>
+                    <p><strong>Destination:</strong> {{ destination }}</p>
+                    <p><strong>Date:</strong> {{ date|date:"d/m/Y" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Nombre de passagers:</strong> {{ passagers }}</p>
+                    {% if compagnie %}
+                    <p><strong>Compagnie:</strong> {{ compagnie }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% if bus_routes %}
+        <h3 class="mb-4">Trajets disponibles</h3>
+        <div class="row">
+            {% for route in bus_routes %}
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">{{ route.autobus.compagnie.nom }} - Bus {{ route.autobus.numero_bus }}</h5>
+                        </div>
+                        <div class="card-body">
+                            <h5 class="card-title">{{ route.heure_depart|time:"H:i" }} - {{ route.heure_arrivee|time:"H:i" }}</h5>
+                            <p class="card-text">
+                                <strong>Durée:</strong> {{ route.duree }}<br>
+                                <strong>Type:</strong> {{ route.autobus.type_bus }}<br>
+                                <strong>Places disponibles:</strong> {{ route.places_disponibles }}<br>
+                                <strong>Prix:</strong> {{ route.prix_standard }} DH
+                            </p>
+                            <div class="d-flex gap-2 mb-3">
+                                {% if route.autobus.est_climatise %}
+                                    <span class="badge bg-info">Climatisé</span>
+                                {% endif %}
+                                {% if route.autobus.wifi_disponible %}
+                                    <span class="badge bg-success">WiFi</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'reservation_confirmation' %}?bus_id={{ route.id }}" class="btn btn-success">Réserver</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            <h4 class="alert-heading">Aucun trajet disponible</h4>
+            <p>Désolé, aucun trajet n'est disponible pour les critères sélectionnés. Veuillez modifier votre recherche.</p>
+            <a href="javascript:history.back()" class="btn btn-primary">Retour à la recherche</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold">Réservation de Billet d'Autobus</h2>
+    {% if compagnie_nom != 'Toutes' %}
+        <p class="lead">Recherchez et réservez votre billet d'autobus avec {{ compagnie_nom }}.</p>
+    {% else %}
+        <p class="lead">Recherchez et réservez votre billet d'autobus en quelques clics.</p>
+    {% endif %}
+    
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_ville_depart" class="form-label">Ville de départ</label>
+                        <input type="text" name="ville_depart" id="id_ville_depart" class="form-control" placeholder="Ex: Casablanca" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_ville_arrivee" class="form-label">Ville d'arrivée</label>
+                        <input type="text" name="ville_arrivee" id="id_ville_arrivee" class="form-control" placeholder="Ex: Marrakech" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_date_depart" class="form-label">Date de départ</label>
+                        <div class="row">
+                            <div class="col">
+                                <select name="date_depart_month" class="form-select">
+                                    <option value="1">Janvier</option>
+                                    <option value="2">Février</option>
+                                    <option value="3">Mars</option>
+                                    <option value="4">Avril</option>
+                                    <option value="5">Mai</option>
+                                    <option value="6">Juin</option>
+                                    <option value="7">Juillet</option>
+                                    <option value="8">Août</option>
+                                    <option value="9">Septembre</option>
+                                    <option value="10">Octobre</option>
+                                    <option value="11">Novembre</option>
+                                    <option value="12">Décembre</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select name="date_depart_day" class="form-select">
+                                    {% for i in "123456789012345678901234567890"|make_list|slice:":31" %}
+                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select name="date_depart_year" class="form-select">
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_date_retour" class="form-label">Date de retour (optionnel)</label>
+                        <div class="row">
+                            <div class="col">
+                                <select name="date_retour_month" class="form-select">
+                                    <option value="1">Janvier</option>
+                                    <option value="2">Février</option>
+                                    <option value="3">Mars</option>
+                                    <option value="4">Avril</option>
+                                    <option value="5">Mai</option>
+                                    <option value="6">Juin</option>
+                                    <option value="7">Juillet</option>
+                                    <option value="8">Août</option>
+                                    <option value="9">Septembre</option>
+                                    <option value="10">Octobre</option>
+                                    <option value="11">Novembre</option>
+                                    <option value="12">Décembre</option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select name="date_retour_day" class="form-select">
+                                    {% for i in "123456789012345678901234567890"|make_list|slice:":31" %}
+                                        <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col">
+                                <select name="date_retour_year" class="form-select">
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_nombre_places" class="form-label">Nombre de passagers</label>
+                        <input type="number" name="nombre_places" id="id_nombre_places" class="form-control" value="1" min="1" max="10" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_nom" class="form-label">Nom complet</label>
+                        <input type="text" name="nom" id="id_nom" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id_email" class="form-label">Email</label>
+                        <input type="email" name="email" id="id_email" class="form-control" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="id_telephone" class="form-label">Téléphone</label>
+                        <input type="tel" name="telephone" id="id_telephone" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Rechercher des disponibilités</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <h3>Pourquoi réserver avec Safariyat ?</h3>
+        <div class="row mt-3">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-search fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Recherche simplifiée</h5>
+                        <p class="card-text">Trouvez facilement les meilleurs trajets parmi toutes les compagnies d'autobus.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-credit-card fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Paiement sécurisé</h5>
+                        <p class="card-text">Réservez en toute sécurité avec nos options de paiement protégées.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-ticket-perforated fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">E-ticket instantané</h5>
+                        <p class="card-text">Recevez votre billet électronique immédiatement après la réservation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

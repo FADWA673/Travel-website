@@ -1,0 +1,212 @@
+{% extends 'admin/base_site.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+  <h2 class="mb-4">Historique des réservations (Vue administrateur)</h2>
+  
+  <!-- Onglets de navigation -->
+  <ul class="nav nav-tabs mb-4" id="reservationTabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" id="all-tab" data-bs-toggle="tab" data-bs-target="#all" type="button" role="tab" aria-controls="all" aria-selected="true">
+        Toutes les réservations
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="bus-tab" data-bs-toggle="tab" data-bs-target="#bus" type="button" role="tab" aria-controls="bus" aria-selected="false">
+        Autobus
+      </button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" id="taxi-tab" data-bs-toggle="tab" data-bs-target="#taxi" type="button" role="tab" aria-controls="taxi" aria-selected="false">
+        Taxi
+      </button>
+    </li>
+  </ul>
+  
+  <div class="tab-content" id="reservationTabsContent">
+    <!-- Toutes les réservations -->
+    <div class="tab-pane fade show active" id="all" role="tabpanel" aria-labelledby="all-tab">
+      {% if reservations or taxi_reservations or bus_reservations %}
+        <div class="row">
+          <!-- Réservations standard -->
+          {% for res in reservations %}
+            <div class="col-md-6 mb-4">
+              <div class="card shadow rounded-3">
+                <div class="card-header bg-primary text-white">
+                  <h5 class="card-title mb-0">{{ res.travel_type|title }}</h5>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>Client :</strong> {{ res.client.first_name }} {{ res.client.last_name }}<br>
+                    <strong>Départ :</strong> {{ res.origin }}<br>
+                    <strong>Destination :</strong> {{ res.destination }}<br>
+                    <strong>Date :</strong> {{ res.travel_date|date:"d/m/Y H:i" }}<br>
+                    <strong>Montant :</strong> {{ res.amount }} DH
+                  </p>
+                  <span class="badge bg-success">Réservé</span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          
+          <!-- Réservations de taxi -->
+          {% for res in taxi_reservations %}
+            <div class="col-md-6 mb-4">
+              <div class="card shadow rounded-3">
+                <div class="card-header bg-warning text-dark">
+                  <h5 class="card-title mb-0">Taxi</h5>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>Départ :</strong> {{ res.depart }}<br>
+                    <strong>Destination :</strong> {{ res.destination }}<br>
+                    <strong>Date :</strong> {{ res.date|date:"d/m/Y" }}
+                    {% if res.heure %} à {{ res.heure }}{% endif %}<br>
+                    <strong>Type de taxi :</strong> {{ res.type_taxi }}<br>
+                    <strong>Passagers :</strong> {{ res.nombre_passagers }}
+                  </p>
+                  <span class="badge bg-success">
+                    {{ res.statut|title }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+          
+          <!-- Réservations d'autobus -->
+          {% for res in bus_reservations %}
+            <div class="col-md-6 mb-4">
+              <div class="card shadow rounded-3">
+                <div class="card-header bg-info text-white">
+                  <h5 class="card-title mb-0">Autobus</h5>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>Passager :</strong> {{ res.nom_passager }}<br>
+                    {% if res.trajet %}
+                      <strong>Départ :</strong> {{ res.trajet.ville_depart }}<br>
+                      <strong>Destination :</strong> {{ res.trajet.ville_arrivee }}<br>
+                      {% if res.trajet.heure_depart %}
+                        <strong>Heure :</strong> {{ res.trajet.heure_depart|time:"H:i" }}<br>
+                      {% endif %}
+                      {% if res.trajet.autobus.compagnie %}
+                        <strong>Compagnie :</strong> {{ res.trajet.autobus.compagnie.nom }}<br>
+                      {% endif %}
+                    {% endif %}
+                    <strong>Date :</strong> {{ res.date_voyage|date:"d/m/Y" }}<br>
+                    <strong>Passagers :</strong> {{ res.nombre_passagers }}<br>
+                    <strong>Montant :</strong> {{ res.prix_total }} DH
+                  </p>
+                  <span class="badge bg-success">
+                    {{ res.statut|title }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">
+          <h4 class="alert-heading">Aucune réservation trouvée</h4>
+          <p>Il n'y a pas encore de réservations dans le système.</p>
+        </div>
+      {% endif %}
+    </div>
+    
+    <!-- Onglet Autobus -->
+    <div class="tab-pane fade" id="bus" role="tabpanel" aria-labelledby="bus-tab">
+      {% if bus_reservations %}
+        <div class="row">
+          {% for res in bus_reservations %}
+            <div class="col-md-6 mb-4">
+              <div class="card shadow rounded-3">
+                <div class="card-header bg-info text-white">
+                  <h5 class="card-title mb-0">Autobus</h5>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>Passager :</strong> {{ res.nom_passager }}<br>
+                    {% if res.trajet %}
+                      <strong>Départ :</strong> {{ res.trajet.ville_depart }}<br>
+                      <strong>Destination :</strong> {{ res.trajet.ville_arrivee }}<br>
+                      {% if res.trajet.heure_depart %}
+                        <strong>Heure :</strong> {{ res.trajet.heure_depart|time:"H:i" }}<br>
+                      {% endif %}
+                      {% if res.trajet.autobus.compagnie %}
+                        <strong>Compagnie :</strong> {{ res.trajet.autobus.compagnie.nom }}<br>
+                      {% endif %}
+                    {% endif %}
+                    <strong>Date :</strong> {{ res.date_voyage|date:"d/m/Y" }}<br>
+                    <strong>Passagers :</strong> {{ res.nombre_passagers }}<br>
+                    <strong>Montant :</strong> {{ res.prix_total }} DH
+                  </p>
+                  <span class="badge bg-success">
+                    {{ res.statut|title }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">Aucune réservation d'autobus trouvée.</div>
+      {% endif %}
+    </div>
+    
+    <!-- Onglet Taxi -->
+    <div class="tab-pane fade" id="taxi" role="tabpanel" aria-labelledby="taxi-tab">
+      {% if taxi_reservations %}
+        <div class="row">
+          {% for res in taxi_reservations %}
+            <div class="col-md-6 mb-4">
+              <div class="card shadow rounded-3">
+                <div class="card-header bg-warning text-dark">
+                  <h5 class="card-title mb-0">Taxi</h5>
+                </div>
+                <div class="card-body">
+                  <p class="card-text">
+                    <strong>Départ :</strong> {{ res.depart }}<br>
+                    <strong>Destination :</strong> {{ res.destination }}<br>
+                    <strong>Date :</strong> {{ res.date|date:"d/m/Y" }}
+                    {% if res.heure %} à {{ res.heure }}{% endif %}<br>
+                    <strong>Type de taxi :</strong> {{ res.type_taxi }}<br>
+                    <strong>Passagers :</strong> {{ res.nombre_passagers }}
+                  </p>
+                  <span class="badge bg-success">
+                    {{ res.statut|title }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="alert alert-info">Aucune réservation de taxi trouvée.</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- Ajouter du CSS pour améliorer l'apparence -->
+<style>
+  .card {
+    transition: transform 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+  }
+  
+  .card-header {
+    font-weight: bold;
+  }
+  
+  .badge {
+    font-size: 0.9rem;
+    padding: 0.5rem 0.7rem;
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

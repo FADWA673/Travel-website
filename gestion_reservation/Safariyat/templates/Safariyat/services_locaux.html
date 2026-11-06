@@ -1,0 +1,445 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Services de transport locaux - Safariyat{% endblock %}
+
+{% block content %}
+<div class="services-locaux-container">
+    <!-- Hero Section -->
+    <section class="hero-section text-white position-relative">
+        <div class="overlay"></div>
+        <div class="container py-5">
+            <div class="row py-5">
+                <div class="col-lg-8 mx-auto text-center">
+                    <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInUp">Services de Transport Locaux</h1>
+                    <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                        Découvrez les meilleurs services de transport disponibles à {{ ville_actuelle }}
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="container my-5">
+        <!-- Filtre par ville avec design amélioré -->
+        <div class="city-filter-container mb-5">
+            <div class="card border-0 shadow-lg rounded-4 p-4">
+                <form method="get" class="d-flex flex-wrap align-items-center gap-3">
+                    <div class="city-filter-label">
+                        <i class="bi bi-geo-alt-fill text-primary me-2"></i>
+                        <span class="fw-bold">Choisissez une ville:</span>
+                    </div>
+                    <div class="city-filter-select flex-grow-1">
+                        <select name="ville" id="ville" class="form-select form-select-lg border-0 bg-light" onchange="this.form.submit()">
+                            {% for ville in villes_disponibles %}
+                                <option value="{{ ville }}" {% if ville == ville_actuelle %}selected{% endif %}>{{ ville }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="city-filter-button">
+                        <button type="submit" class="btn btn-primary btn-lg px-4">
+                            <i class="bi bi-search me-2"></i>Rechercher
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Titre de section avec animation -->
+        <div class="text-center mb-5 animate__animated animate__fadeInUp">
+            <h2 class="display-5 fw-bold">Services disponibles à <span class="text-primary">{{ ville_actuelle }}</span></h2>
+            <p class="lead text-muted">Trouvez le mode de transport qui vous convient</p>
+            <div class="divider mx-auto my-3"></div>
+        </div>
+
+        <!-- Onglets pour les différents types de transport -->
+        <ul class="nav nav-pills nav-justified transport-tabs mb-5" id="transportTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="taxi-tab" data-bs-toggle="tab" data-bs-target="#taxi-content" type="button" role="tab">
+                    <i class="bi bi-taxi-front me-2"></i>Taxis
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="train-tab" data-bs-toggle="tab" data-bs-target="#train-content" type="button" role="tab">
+                    <i class="bi bi-train-front me-2"></i>Trains
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="bus-tab" data-bs-toggle="tab" data-bs-target="#bus-content" type="button" role="tab">
+                    <i class="bi bi-bus-front me-2"></i>Autobus
+                </button>
+            </li>
+        </ul>
+
+        <!-- Contenu des onglets -->
+        <div class="tab-content" id="transportTabsContent">
+            <!-- Taxis -->
+            <div class="tab-pane fade show active" id="taxi-content" role="tabpanel">
+                <div class="row g-4">
+                    {% if services_par_type.taxi %}
+                        {% for service in services_par_type.taxi %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="service-card h-100 animate__animated animate__fadeInUp">
+                                    <div class="service-card-header bg-warning">
+                                        <i class="bi bi-taxi-front"></i>
+                                    </div>
+                                    <div class="service-card-body">
+                                        <h3 class="service-title">{{ service.nom }}</h3>
+                                        <div class="service-info">
+                                            <p><i class="bi bi-geo-alt"></i> {{ service.adresse|default:service.ville }}</p>
+                                            {% if service.telephone %}
+                                                <p><i class="bi bi-telephone"></i> {{ service.telephone }}</p>
+                                            {% endif %}
+                                            {% if service.email %}
+                                                <p><i class="bi bi-envelope"></i> {{ service.email }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="service-features">
+                                            <span class="badge bg-light text-dark">24/7</span>
+                                            <span class="badge bg-light text-dark">Climatisé</span>
+                                            <span class="badge bg-light text-dark">Paiement CB</span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="empty-services">
+                                <i class="bi bi-emoji-frown"></i>
+                                <h4>Aucun service de taxi disponible à {{ ville_actuelle }}</h4>
+                                <p>Essayez une autre ville ou revenez plus tard.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Trains -->
+            <div class="tab-pane fade" id="train-content" role="tabpanel">
+                <div class="row g-4">
+                    {% if services_par_type.train %}
+                        {% for service in services_par_type.train %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="service-card h-100 animate__animated animate__fadeInUp">
+                                    <div class="service-card-header bg-primary">
+                                        <i class="bi bi-train-front"></i>
+                                    </div>
+                                    <div class="service-card-body">
+                                        <h3 class="service-title">{{ service.nom }}</h3>
+                                        <div class="service-info">
+                                            <p><i class="bi bi-geo-alt"></i> {{ service.adresse|default:service.ville }}</p>
+                                            {% if service.telephone %}
+                                                <p><i class="bi bi-telephone"></i> {{ service.telephone }}</p>
+                                            {% endif %}
+                                            {% if service.email %}
+                                                <p><i class="bi bi-envelope"></i> {{ service.email }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="service-features">
+                                            <span class="badge bg-light text-dark">WiFi</span>
+                                            <span class="badge bg-light text-dark">Climatisé</span>
+                                            <span class="badge bg-light text-dark">Restauration</span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="empty-services">
+                                <i class="bi bi-emoji-frown"></i>
+                                <h4>Aucun service de train disponible à {{ ville_actuelle }}</h4>
+                                <p>Essayez une autre ville ou revenez plus tard.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Autobus -->
+            <div class="tab-pane fade" id="bus-content" role="tabpanel">
+                <div class="row g-4">
+                    {% if services_par_type.bus %}
+                        {% for service in services_par_type.bus %}
+                            <div class="col-lg-4 col-md-6">
+                                <div class="service-card h-100 animate__animated animate__fadeInUp">
+                                    <div class="service-card-header bg-info">
+                                        <i class="bi bi-bus-front"></i>
+                                    </div>
+                                    <div class="service-card-body">
+                                        <h3 class="service-title">{{ service.nom }}</h3>
+                                        <div class="service-info">
+                                            <p><i class="bi bi-geo-alt"></i> {{ service.adresse|default:service.ville }}</p>
+                                            {% if service.telephone %}
+                                                <p><i class="bi bi-telephone"></i> {{ service.telephone }}</p>
+                                            {% endif %}
+                                            {% if service.email %}
+                                                <p><i class="bi bi-envelope"></i> {{ service.email }}</p>
+                                            {% endif %}
+                                        </div>
+                                        <div class="service-features">
+                                            <span class="badge bg-light text-dark">WiFi</span>
+                                            <span class="badge bg-light text-dark">Climatisé</span>
+                                            <span class="badge bg-light text-dark">USB</span>
+                                        </div>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="empty-services">
+                                <i class="bi bi-emoji-frown"></i>
+                                <h4>Aucun service d'autobus disponible à {{ ville_actuelle }}</h4>
+                                <p>Essayez une autre ville ou revenez plus tard.</p>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section de réservation porte-à-porte -->
+        <div class="door-to-door-section mt-5 py-5">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h2 class="display-6 fw-bold mb-4">Besoin d'un trajet complet?</h2>
+                    <p class="lead mb-4">Réservez un service porte-à-porte et voyagez sans souci de votre adresse de départ jusqu'à votre destination finale.</p>
+                    <div class="features-list">
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Prise en charge à votre adresse</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Transport principal confortable</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>Dépose à votre destination finale</span>
+                        </div>
+                    </div>
+                    <a href="{% url 'reserver_porte_a_porte' %}" class="btn btn-success btn-lg mt-4">
+                        <i class="bi bi-door-open me-2"></i>Réserver un trajet porte-à-porte
+                    </a>
+                </div>
+                <div class="col-lg-6">
+                    <img src="{% static 'images/door-to-door.jpg' %}" alt="Service porte-à-porte" class="img-fluid rounded-4 shadow-lg" onerror="this.src='https://via.placeholder.com/600x400?text=Service+porte-à-porte'; this.onerror=null;">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Styles pour la page des services locaux */
+    .services-locaux-container {
+        overflow-x: hidden;
+    }
+    
+    /* Hero section */
+    .hero-section {
+        background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('{% static "images/city-transport.jpg" %}') center/cover no-repeat;
+        padding: 100px 0;
+        margin-bottom: 2rem;
+        position: relative;
+    }
+    
+    .hero-section .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(0, 86, 179, 0.8) 0%, rgba(0, 36, 125, 0.8) 100%);
+        z-index: 1;
+    }
+    
+    .hero-section .container {
+        position: relative;
+        z-index: 2;
+    }
+    
+    /* Divider */
+    .divider {
+        height: 4px;
+        width: 70px;
+        background: linear-gradient(90deg, #0056b3, #17a2b8);
+        border-radius: 2px;
+    }
+    
+    /* City filter */
+    .city-filter-container {
+        margin-top: -50px;
+        position: relative;
+        z-index: 10;
+    }
+    
+    .city-filter-label {
+        font-size: 1.1rem;
+    }
+    
+    /* Transport tabs */
+    .transport-tabs {
+        border-radius: 50px;
+        padding: 5px;
+        background-color: #f8f9fa;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .transport-tabs .nav-link {
+        border-radius: 50px;
+        padding: 15px 25px;
+        font-weight: 600;
+        color: #495057;
+        transition: all 0.3s ease;
+    }
+    
+    .transport-tabs .nav-link:hover {
+        background-color: #e9ecef;
+    }
+    
+    .transport-tabs .nav-link.active {
+        background-color: #0056b3;
+        color: white;
+    }
+    
+    /* Service cards */
+    .service-card {
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        border: none;
+    }
+    
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+    }
+    
+    .service-card-header {
+        height: 120px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+    }
+    
+    .service-card-header i {
+        font-size: 3rem;
+    }
+    
+    .service-card-body {
+        padding: 25px;
+    }
+    
+    .service-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: #333;
+    }
+    
+    .service-info {
+        margin-bottom: 15px;
+    }
+    
+    .service-info p {
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+    }
+    
+    .service-info i {
+        margin-right: 10px;
+        color: #0056b3;
+    }
+    
+    .service-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 15px;
+    }
+    
+    .service-features .badge {
+        padding: 8px 12px;
+        font-weight: 500;
+    }
+    
+    /* Empty services */
+    .empty-services {
+        text-align: center;
+        padding: 50px 20px;
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        margin-bottom: 30px;
+    }
+    
+    .empty-services i {
+        font-size: 3rem;
+        color: #6c757d;
+        margin-bottom: 20px;
+    }
+    
+    /* Door to door section */
+    .door-to-door-section {
+        background-color: #f8f9fa;
+        border-radius: 15px;
+        padding: 30px;
+    }
+    
+    .features-list {
+        margin: 20px 0;
+    }
+    
+    .feature-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .feature-item i {
+        font-size: 1.5rem;
+        margin-right: 15px;
+    }
+    
+    /* Animation delay classes */
+    .animate__delay-1s {
+        animation-delay: 0.2s;
+    }
+    
+    .animate__delay-2s {
+        animation-delay: 0.4s;
+    }
+    
+    .animate__delay-3s {
+        animation-delay: 0.6s;
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .hero-section {
+            padding: 60px 0;
+        }
+        
+        .transport-tabs .nav-link {
+            padding: 10px 15px;
+            font-size: 0.9rem;
+        }
+        
+        .service-card-header {
+            height: 100px;
+        }
+        
+        .service-title {
+            font-size: 1.3rem;
+        }
+    }
+</style>
+{% endblock %}

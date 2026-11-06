@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="fw-bold mb-4">Nos compagnies partenaires</h2>
+    <p class="lead mb-5">Découvrez les compagnies d'autobus avec lesquelles nous collaborons pour vous offrir le meilleur service de transport.</p>
+    
+    {% if compagnies %}
+        <div class="row">
+            {% for compagnie in compagnies %}
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">{{ compagnie.nom }}</h5>
+                        </div>
+                        {% if compagnie.logo %}
+                            <img src="{{ compagnie.logo.url }}" class="card-img-top p-3" alt="{{ compagnie.nom }}" style="height: 150px; object-fit: contain;">
+                        {% else %}
+                            <div class="text-center p-3">
+                                <i class="bi bi-bus-front display-4 text-muted"></i>
+                            </div>
+                        {% endif %}
+                        <div class="card-body">
+                            <p class="card-text">{{ compagnie.description|truncatewords:30 }}</p>
+                            <div class="mt-3">
+                                {% if compagnie.site_web %}
+                                    <p><i class="bi bi-globe me-2"></i><a href="{{ compagnie.site_web }}" target="_blank">Site web</a></p>
+                                {% endif %}
+                                {% if compagnie.telephone %}
+                                    <p><i class="bi bi-telephone me-2"></i>{{ compagnie.telephone }}</p>
+                                {% endif %}
+                                {% if compagnie.email %}
+                                    <p><i class="bi bi-envelope me-2"></i>{{ compagnie.email }}</p>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'reservation_bus' %}?compagnie={{ compagnie.id }}" class="btn btn-primary mt-2">Réserver un billet</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info">
+            <h4 class="alert-heading">Aucune compagnie disponible</h4>
+            <p>Nous travaillons actuellement à l'ajout de nouvelles compagnies partenaires. Veuillez revenir ultérieurement.</p>
+        </div>
+    {% endif %}
+    
+    <div class="mt-5">
+        <h3>Pourquoi choisir nos compagnies partenaires ?</h3>
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-shield-check fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Fiabilité</h5>
+                        <p class="card-text">Nos compagnies partenaires sont sélectionnées pour leur fiabilité et leur ponctualité.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-star fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Qualité de service</h5>
+                        <p class="card-text">Profitez d'un service de qualité avec des véhicules confortables et bien entretenus.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <i class="bi bi-cash-coin fs-1 text-primary mb-3"></i>
+                        <h5 class="card-title">Tarifs compétitifs</h5>
+                        <p class="card-text">Bénéficiez des meilleurs prix grâce à nos partenariats avec les principales compagnies.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

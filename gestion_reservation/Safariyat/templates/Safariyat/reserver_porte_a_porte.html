@@ -1,0 +1,352 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Réservation Transport Porte-à-Porte - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Carte principale -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <!-- En-tête avec fond dégradé -->
+                <div class="card-header bg-gradient-primary text-white p-4">
+                    <h1 class="h3 mb-0 fw-bold">
+                       <b><i class="bi bi-door-open me-2" style="color: rgb(5, 5, 84);">Réservation Transport Porte-à-Porte</i></b> 
+                    </h1>
+                    <b><p class="mb-0 mt-2 opacity-75" style="color:rgb(5, 5, 84);">Voyagez sans souci de votre adresse exacte à votre destination finale</p></b>
+                </div>
+
+                <div class="card-body p-4">
+                    <!-- Étapes de réservation -->
+                    <div class="d-flex justify-content-between mb-4">
+                        <div class="step active">
+                            <div class="step-icon">
+                                <i class="bi bi-1-circle-fill"></i>
+                            </div>
+                            <div class="step-label">Détails</div>
+                        </div>
+                        <div class="step-connector active"></div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="bi bi-2-circle"></i>
+                            </div>
+                            <div class="step-label">Services</div>
+                        </div>
+                        <div class="step-connector"></div>
+                        <div class="step">
+                            <div class="step-icon">
+                                <i class="bi bi-3-circle"></i>
+                            </div>
+                            <div class="step-label">Confirmation</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Explication du service -->
+                    <div class="alert alert-info border-0 d-flex p-4 mb-4 rounded-3 bg-info bg-opacity-10">
+                        <div class="alert-icon me-3">
+                            <i class="bi bi-info-circle-fill fs-3 text-info"></i>
+                        </div>
+                        <div>
+                            <h5 class="alert-heading fw-bold mb-1">Qu'est-ce qu'un trajet porte-à-porte ?</h5>
+                            <p class="mb-0">Un service qui vous prend en charge depuis votre adresse exacte et vous dépose à votre destination finale, en combinant plusieurs modes de transport pour un voyage sans tracas.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulaire de réservation -->
+                    <form method="post" action="{% url 'reserver_porte_a_porte' %}" class="needs-validation" id="reservation-form" novalidate>
+                        {% csrf_token %}
+                        {% if form.errors %}
+                        <div class="alert alert-danger mb-4">
+                            <h5 class="alert-heading"><i class="bi bi-exclamation-triangle-fill me-2"></i>Erreurs dans le formulaire</h5>
+                            <ul class="mb-0">
+                                {% for field in form %}
+                                    {% for error in field.errors %}
+                                        <li>{{ field.label }}: {{ error }}</li>
+                                    {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                    <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+                        
+                        <div class="row g-4">
+                            <!-- Adresse de départ -->
+                            <div class="col-12">
+                                <label for="adresse_depart" class="form-label fw-medium">
+                                    <i class="bi bi-geo-alt-fill text-primary me-1"></i>Adresse de départ
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-house-door"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-lg" id="adresse_depart" name="adresse_depart" 
+                                        placeholder="Ex: 123 Rue Mohammed V, Casablanca" required>
+                                    <div class="invalid-feedback">
+                                        Veuillez indiquer votre adresse de départ.
+                                    </div>
+                                </div>
+                                <div class="form-text">Indiquez l'adresse exacte où vous souhaitez être pris en charge.</div>
+                            </div>
+                            
+                            <!-- Adresse de destination -->
+                            <div class="col-12">
+                                <label for="adresse_destination" class="form-label fw-medium">
+                                    <i class="bi bi-geo-alt-fill text-danger me-1"></i>Adresse de destination
+                                </label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light">
+                                        <i class="bi bi-building"></i>
+                                    </span>
+                                    <input type="text" class="form-control form-control-lg" id="adresse_destination" name="adresse_destination" 
+                                        placeholder="Ex: 45 Avenue Hassan II, Marrakech" required>
+                                    <div class="invalid-feedback">
+                                        Veuillez indiquer votre adresse de destination.
+                                    </div>
+                                </div>
+                                <div class="form-text">Indiquez l'adresse exacte où vous souhaitez être déposé.</div>
+                            </div>
+                            
+                            <!-- Date et Heure -->
+                            <div class="col-md-6">
+                                <label for="date" class="form-label fw-medium">
+                                    <i class="bi bi-calendar-event text-primary me-1"></i>Date du voyage
+                                </label>
+                                <input type="date" class="form-control form-control-lg" id="date" name="date" 
+                                    min="{{ today|date:'Y-m-d' }}" required>
+                                <div class="invalid-feedback">
+                                    Veuillez sélectionner une date valide.
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="heure" class="form-label fw-medium">
+                                    <i class="bi bi-clock text-primary me-1"></i>Heure de départ souhaitée
+                                </label>
+                                <input type="time" class="form-control form-control-lg" id="heure" name="heure" required>
+                                <div class="invalid-feedback">
+                                    Veuillez sélectionner une heure de départ.
+                                </div>
+                            </div>
+                            
+                            <!-- Passagers et Bagages -->
+                            <div class="col-md-6">
+                                <label for="nombre_passagers" class="form-label fw-medium">
+                                    <i class="bi bi-people-fill text-primary me-1"></i>Nombre de passagers
+                                </label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary" id="decrease-passengers">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <input type="number" class="form-control form-control-lg text-center" id="nombre_passagers" name="nombre_passagers" 
+                                        min="1" max="10" value="1" required>
+                                    <button type="button" class="btn btn-outline-secondary" id="increase-passengers">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="bagages" class="form-label fw-medium">
+                                    <i class="bi bi-briefcase-fill text-primary me-1"></i>Nombre de bagages
+                                </label>
+                                <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary" id="decrease-baggage">
+                                        <i class="bi bi-dash"></i>
+                                    </button>
+                                    <input type="number" class="form-control form-control-lg text-center" id="bagages" name="bagages" 
+                                        min="0" max="10" value="1">
+                                    <button type="button" class="btn btn-outline-secondary" id="increase-baggage">
+                                        <i class="bi bi-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Besoins spécifiques -->
+                            <div class="col-12">
+                                <label for="commentaires" class="form-label fw-medium">
+                                    <i class="bi bi-chat-left-text text-primary me-1"></i>Besoins spécifiques (optionnel)
+                                </label>
+                                <textarea class="form-control" id="commentaires" name="commentaires" rows="3" 
+                                    placeholder="Ex: Besoin d'un siège bébé, assistance particulière, etc."></textarea>
+                            </div>
+                            
+                            <!-- Options de transport -->
+                            <div class="col-12 mt-2">
+                                <label class="form-label fw-medium mb-3">
+                                    <i class="bi bi-star-fill text-warning me-1"></i>Options de transport préférées
+                                </label>
+                                
+                                <div class="transport-options d-flex flex-wrap gap-3">
+                                    <div class="form-check custom-option">
+                                        <input class="form-check-input" type="checkbox" id="option_taxi" name="option_taxi" value="1" checked>
+                                        <label class="form-check-label d-flex align-items-center" for="option_taxi">
+                                            <i class="bi bi-taxi-front text-warning me-2 fs-5"></i>
+                                            <span>Taxi</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-check custom-option">
+                                        <input class="form-check-input" type="checkbox" id="option_bus" name="option_bus" value="1" checked>
+                                        <label class="form-check-label d-flex align-items-center" for="option_bus">
+                                            <i class="bi bi-bus-front text-info me-2 fs-5"></i>
+                                            <span>Bus</span>
+                                        </label>
+                                    </div>
+                                    
+                                    <div class="form-check custom-option">
+                                        <input class="form-check-input" type="checkbox" id="option_train" name="option_train" value="1" checked>
+                                        <label class="form-check-label d-flex align-items-center" for="option_train">
+                                            <i class="bi bi-train-front text-primary me-2 fs-5"></i>
+                                            <span>Train</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Boutons d'action -->
+                        <div class="d-flex justify-content-between mt-4 pt-2">
+                            <a href="{% url 'services_locaux' %}" class="btn btn-outline-secondary btn-lg px-4">
+                                <i class="bi bi-arrow-left me-1"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-primary btn-lg px-5" id="submit-button">
+                                <i class="bi bi-arrow-right me-1"></i>Continuer
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Section des avantages -->
+            <div class="card border-0 shadow-sm rounded-4 mt-4">
+                <div class="card-body p-4">
+                    <h4 class="card-title mb-4">
+                        <i class="bi bi-check-circle-fill text-success me-2"></i>Avantages du transport porte-à-porte
+                    </h4>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="feature-icon bg-primary bg-opacity-10 text-primary rounded-circle p-3">
+                                        <i class="bi bi-clock"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mt-0 mb-1">Gain de temps</h5>
+                                    <p class="text-muted mb-0">Évitez les transferts compliqués et les temps d'attente.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="feature-icon bg-success bg-opacity-10 text-success rounded-circle p-3">
+                                        <i class="bi bi-shield-check"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mt-0 mb-1">Sécurité</h5>
+                                    <p class="text-muted mb-0">Voyagez en toute sécurité avec des chauffeurs professionnels.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="feature-icon bg-info bg-opacity-10 text-info rounded-circle p-3">
+                                        <i class="bi bi-geo-alt"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mt-0 mb-1">Flexibilité</h5>
+                                    <p class="text-muted mb-0">Choisissez vos points de départ et d'arrivée exacts.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="d-flex">
+                                <div class="flex-shrink-0">
+                                    <div class="feature-icon bg-warning bg-opacity-10 text-warning rounded-circle p-3">
+                                        <i class="bi bi-cash-coin"></i>
+                                    </div>
+                                </div>
+                                <div class="flex-grow-1 ms-3">
+                                    <h5 class="mt-0 mb-1">Tarifs transparents</h5>
+                                    <p class="text-muted mb-0">Prix fixe connu à l'avance, sans surprises.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script pour la validation du formulaire et les compteurs
+    document.addEventListener('DOMContentLoaded', function() {
+        // Récupérer les éléments du formulaire
+        const form = document.getElementById('reservation-form');
+        const submitBtn = document.getElementById('submit-button');
+        
+        // Compteur de passagers
+        const passengersInput = document.getElementById('nombre_passagers');
+        const decreasePassengers = document.getElementById('decrease-passengers');
+        const increasePassengers = document.getElementById('increase-passengers');
+        
+        decreasePassengers.addEventListener('click', function() {
+            const currentValue = parseInt(passengersInput.value);
+            if (currentValue > parseInt(passengersInput.min)) {
+                passengersInput.value = currentValue - 1;
+            }
+        });
+        
+        increasePassengers.addEventListener('click', function() {
+            const currentValue = parseInt(passengersInput.value);
+            if (currentValue < parseInt(passengersInput.max)) {
+                passengersInput.value = currentValue + 1;
+            }
+        });
+        
+        // Compteur de bagages
+        const baggageInput = document.getElementById('bagages');
+        const decreaseBaggage = document.getElementById('decrease-baggage');
+        const increaseBaggage = document.getElementById('increase-baggage');
+        
+        decreaseBaggage.addEventListener('click', function() {
+            const currentValue = parseInt(baggageInput.value);
+            if (currentValue > parseInt(baggageInput.min)) {
+                baggageInput.value = currentValue - 1;
+            }
+        });
+        
+        increaseBaggage.addEventListener('click', function() {
+            const currentValue = parseInt(baggageInput.value);
+            if (currentValue < parseInt(baggageInput.max)) {
+                baggageInput.value = currentValue + 1;
+            }
+        });
+        
+        // Validation du formulaire
+        form.addEventListener('submit', function(event) {
+            if (!form.checkValidity()) {
+                event.preventDefault();
+                event.stopPropagation();
+                form.classList.add('was-validated');
+            } else {
+                // Afficher l'indicateur de chargement
+                submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Chargement...';
+                submitBtn.disabled = true;
+            }
+        });
+    });
+</script>
+{% endblock %}

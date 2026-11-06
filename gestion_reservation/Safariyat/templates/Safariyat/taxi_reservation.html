@@ -1,0 +1,744 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Réservation de Taxi - Safariyat{% endblock %}
+
+{% block extra_css %}
+<style>
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    
+    .step {
+        flex: 1;
+        text-align: center;
+        padding: 1rem 0;
+        position: relative;
+    }
+    
+    .step:not(:last-child):after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        right: 0;
+        width: 100%;
+        height: 2px;
+        background-color: #dee2e6;
+        transform: translateY(-50%);
+        z-index: -1;
+    }
+    
+    .step-number {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #dee2e6;
+        color: #6c757d;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        position: relative;
+        z-index: 1;
+    }
+    
+    .step.active .step-number {
+        background-color: #0d6efd;
+        color: white;
+    }
+    
+    .step.completed .step-number {
+        background-color: #198754;
+        color: white;
+    }
+    
+    .step-title {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .step.active .step-title {
+        color: #0d6efd;
+        font-weight: bold;
+    }
+    
+    .step.completed .step-title {
+        color: #198754;
+    }
+    
+    .taxi-type-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        border: 2px solid transparent;
+    }
+    
+    .taxi-type-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+    
+    .taxi-type-card.selected {
+        border-color: #0d6efd;
+        background-color: #f8f9ff;
+    }
+    
+    .taxi-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+    
+    .taxi-feature {
+        display: flex;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+    
+    .taxi-feature i {
+        margin-right: 0.25rem;
+        color: #0d6efd;
+    }
+    
+    .payment-option {
+        border: 2px solid #dee2e6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+    
+    .payment-option:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .payment-option.selected {
+        border-color: #0d6efd;
+        background-color: #f8f9ff;
+    }
+    
+    .payment-option-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+    }
+    
+    .payment-option-icon {
+        font-size: 1.5rem;
+        margin-right: 1rem;
+        color: #0d6efd;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Réservation de Taxi</h1>
+    
+    <!-- Indicateur d'étapes -->
+    <div class="step-indicator mb-4">
+        <div class="step active" id="step1">
+            <div class="step-number">1</div>
+            <div class="step-title">Détails du trajet</div>
+        </div>
+        <div class="step" id="step2">
+            <div class="step-number">2</div>
+            <div class="step-title">Type de véhicule</div>
+        </div>
+        <div class="step" id="step3">
+            <div class="step-number">3</div>
+            <div class="step-title">Informations personnelles</div>
+        </div>
+        <div class="step" id="step4">
+            <div class="step-number">4</div>
+            <div class="step-title">Paiement</div>
+        </div>
+        <div class="step" id="step5">
+            <div class="step-number">5</div>
+            <div class="step-title">Confirmation</div>
+        </div>
+    </div>
+    
+    <!-- Formulaire multi-étapes -->
+    <form id="taxiReservationForm" method="post" action="{% url 'taxi_confirmation' %}">
+        {% csrf_token %}
+        
+        <!-- Étape 1: Détails du trajet -->
+        <div class="form-step" id="formStep1">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Détails du trajet</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="depart" class="form-label">Adresse de départ</label>
+                            <input type="text" class="form-control" id="depart" name="depart" placeholder="Ex: 123 Rue Mohammed V, Casablanca" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="destination" class="form-label">Adresse de destination</label>
+                            <input type="text" class="form-control" id="destination" name="destination" placeholder="Ex: Aéroport Mohammed V, Casablanca" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="date" class="form-label">Date</label>
+                            <input type="date" class="form-control" id="date" name="date" min="{{ today_date|date:'Y-m-d' }}" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="heure" class="form-label">Heure</label>
+                            <input type="time" class="form-control" id="heure" name="heure" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nombre_passagers" class="form-label">Nombre de passagers</label>
+                            <input type="number" class="form-control" id="nombre_passagers" name="nombre_passagers" min="1" max="8" value="1" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="bagages" class="form-label">Nombre de bagages</label>
+                            <input type="number" class="form-control" id="bagages" name="bagages" min="0" max="10" value="1">
+                        </div>
+                    </div>
+                    
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="aller_retour" name="aller_retour">
+                        <label class="form-check-label" for="aller_retour">
+                            Réserver un aller-retour
+                        </label>
+                    </div>
+                    
+                    <div id="retourDetails" class="border rounded p-3 mb-3" style="display: none;">
+                        <h6 class="mb-3">Détails du retour</h6>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="date_retour" class="form-label">Date de retour</label>
+                                <input type="date" class="form-control" id="date_retour" name="date_retour" min="{{ today_date|date:'Y-m-d' }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="heure_retour" class="form-label">Heure de retour</label>
+                                <input type="time" class="form-control" id="heure_retour" name="heure_retour">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary next-step">Continuer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Étape 2: Type de véhicule -->
+        <div class="form-step" id="formStep2" style="display: none;">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Choisissez votre type de véhicule</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <div class="card taxi-type-card h-100" data-taxi-type="standard" data-price="150">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-car fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Standard</h5>
+                                    <p class="card-text">Berline confortable pour 1-4 passagers</p>
+                                    <div class="taxi-features">
+                                        <div class="taxi-feature"><i class="fas fa-user"></i> 4 passagers max</div>
+                                        <div class="taxi-feature"><i class="fas fa-suitcase"></i> 2 bagages</div>
+                                        <div class="taxi-feature"><i class="fas fa-snowflake"></i> Climatisé</div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary">150 DH</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card taxi-type-card h-100" data-taxi-type="premium" data-price="250">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-car-side fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Premium</h5>
+                                    <p class="card-text">Véhicule haut de gamme pour 1-4 passagers</p>
+                                    <div class="taxi-features">
+                                        <div class="taxi-feature"><i class="fas fa-user"></i> 4 passagers max</div>
+                                        <div class="taxi-feature"><i class="fas fa-suitcase"></i> 3 bagages</div>
+                                        <div class="taxi-feature"><i class="fas fa-snowflake"></i> Climatisé</div>
+                                        <div class="taxi-feature"><i class="fas fa-wifi"></i> WiFi gratuit</div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary">250 DH</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-4 mb-3">
+                            <div class="card taxi-type-card h-100" data-taxi-type="familial" data-price="350">
+                                <div class="card-body text-center">
+                                    <i class="fas fa-shuttle-van fa-3x mb-3 text-primary"></i>
+                                    <h5 class="card-title">Familial</h5>
+                                    <p class="card-text">Minivan spacieux pour 1-7 passagers</p>
+                                    <div class="taxi-features">
+                                        <div class="taxi-feature"><i class="fas fa-user"></i> 7 passagers max</div>
+                                        <div class="taxi-feature"><i class="fas fa-suitcase"></i> 5 bagages</div>
+                                        <div class="taxi-feature"><i class="fas fa-snowflake"></i> Climatisé</div>
+                                        <div class="taxi-feature"><i class="fas fa-wifi"></i> WiFi gratuit</div>
+                                    </div>
+                                    <div class="mt-3">
+                                        <span class="badge bg-primary">350 DH</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="type_taxi" name="type_taxi" value="">
+                    <input type="hidden" id="prix" name="prix" value="">
+                    
+                    <div class="alert alert-info mt-3">
+                        <i class="fas fa-info-circle"></i> Les prix indiqués sont pour un trajet simple. Pour un aller-retour, le prix sera calculé en conséquence.
+                    </div>
+                    
+                    <div class="d-flex justify-content-between mt-3">
+                        <button type="button" class="btn btn-secondary prev-step">Retour</button>
+                        <button type="button" class="btn btn-primary next-step" id="vehicleNextBtn" disabled>Continuer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Étape 3: Informations personnelles -->
+        <div class="form-step" id="formStep3" style="display: none;">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Informations personnelles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="nom" class="form-label">Nom</label>
+                            <input type="text" class="form-control" id="nom" name="nom" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="prenom" class="form-label">Prénom</label>
+                            <input type="text" class="form-control" id="prenom" name="prenom" required>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" name="email" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telephone" class="form-label">Téléphone</label>
+                            <input type="tel" class="form-control" id="telephone" name="telephone" placeholder="0600000000" required>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="instructions" class="form-label">Instructions spéciales (optionnel)</label>
+                        <textarea class="form-control" id="instructions" name="instructions" rows="3" placeholder="Ex: Besoin d'un siège bébé, assistance particulière, etc."></textarea>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary prev-step">Retour</button>
+                        <button type="button" class="btn btn-primary next-step">Continuer</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Étape 4: Paiement -->
+        <div class="form-step" id="formStep4" style="display: none;">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Paiement</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <div class="d-flex">
+                            <div class="me-3">
+                                <i class="fas fa-info-circle fa-2x"></i>
+                            </div>
+                            <div>
+                                <h5 class="alert-heading">Récapitulatif de votre réservation</h5>
+                                <p class="mb-0">Veuillez vérifier les détails de votre réservation avant de procéder au paiement.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h6>Détails du trajet</h6>
+                            <p><strong>De:</strong> <span id="recap-depart"></span></p>
+                            <p><strong>À:</strong> <span id="recap-destination"></span></p>
+                            <p><strong>Date:</strong> <span id="recap-date"></span></p>
+                            <p><strong>Heure:</strong> <span id="recap-heure"></span></p>
+                            <p><strong>Passagers:</strong> <span id="recap-passagers"></span></p>
+                            <p><strong>Type de véhicule:</strong> <span id="recap-vehicule"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Tarification</h6>
+                            <div id="recap-pricing">
+                                <p><strong>Prix de base:</strong> <span id="recap-prix-base"></span> DH</p>
+                                <div id="recap-aller-retour" style="display: none;">
+                                    <p><strong>Supplément aller-retour:</strong> <span id="recap-prix-retour"></span> DH</p>
+                                </div>
+                                <hr>
+                                <p><strong>Total:</strong> <span id="recap-prix-total"></span> DH</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h5 class="mb-3">Choisissez votre mode de paiement</h5>
+                    
+                    <div class="payment-option selected" data-payment="card">
+                        <div class="payment-option-header">
+                            <div class="payment-option-icon">
+                                <i class="fas fa-credit-card"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Carte bancaire</h6>
+                                <small class="text-muted">Paiement sécurisé en ligne</small>
+                            </div>
+                        </div>
+                        <div class="payment-details">
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="card_number" class="form-label">Numéro de carte</label>
+                                    <input type="text" class="form-control" id="card_number" name="card_number" placeholder="XXXX XXXX XXXX XXXX">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="card_name" class="form-label">Nom sur la carte</label>
+                                    <input type="text" class="form-control" id="card_name" name="card_name">
+                                </div>
+                            </div>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
+                                    <label for="expiry_date" class="form-label">Date d'expiration</label>
+                                    <input type="text" class="form-control" id="expiry_date" name="expiry_date" placeholder="MM/AA">
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="cvv" class="form-label">CVV</label>
+                                    <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="payment-option mt-3" data-payment="counter">
+                        <div class="payment-option-header">
+                            <div class="payment-option-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Paiement au chauffeur</h6>
+                                <small class="text-muted">Payez directement au chauffeur lors de votre trajet</small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <input type="hidden" id="payment_method" name="payment_method" value="card">
+                    
+                    <div class="d-flex justify-content-between mt-4">
+                        <button type="button" class="btn btn-secondary prev-step">Retour</button>
+                        <button type="button" class="btn btn-primary next-step">Confirmer la réservation</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Étape 5: Confirmation -->
+        <div class="form-step" id="formStep5" style="display: none;">
+            <div class="card border-success">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Réservation confirmée</h5>
+                </div>
+                <div class="card-body text-center">
+                    <i class="fas fa-check-circle text-success" style="font-size: 5rem;"></i>
+                    <h3 class="mt-4">Merci pour votre réservation !</h3>
+                    <p class="lead">Votre taxi est réservé avec succès.</p>
+                    
+                    <div class="alert alert-info mt-4 text-start">
+                        <h5><i class="fas fa-info-circle"></i> Informations importantes</h5>
+                        <ul class="mb-0">
+                            <li>Un email de confirmation a été envoyé à votre adresse.</li>
+                            <li>Vous recevrez un SMS avec les coordonnées de votre chauffeur 15 minutes avant l'heure prévue.</li>
+                            <li>En cas de besoin, vous pouvez nous contacter au 0522-XX-XX-XX.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'accueil' %}" class="btn btn-primary">Retour à l'accueil</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Variables pour suivre l'étape actuelle
+        let currentStep = 1;
+        const totalSteps = 5;
+        
+        // Gestion de l'affichage des détails de retour
+        const allerRetourCheckbox = document.getElementById('aller_retour');
+        const retourDetails = document.getElementById('retourDetails');
+        
+        allerRetourCheckbox.addEventListener('change', function() {
+            retourDetails.style.display = this.checked ? 'block' : 'none';
+            
+            // Si aller-retour est coché, rendre les champs obligatoires
+            const dateRetour = document.getElementById('date_retour');
+            const heureRetour = document.getElementById('heure_retour');
+            
+            dateRetour.required = this.checked;
+            heureRetour.required = this.checked;
+        });
+        
+        // Sélection du type de taxi
+        const taxiCards = document.querySelectorAll('.taxi-type-card');
+        const typeTaxiInput = document.getElementById('type_taxi');
+        const prixInput = document.getElementById('prix');
+        const vehicleNextBtn = document.getElementById('vehicleNextBtn');
+        
+        taxiCards.forEach(card => {
+            card.addEventListener('click', function() {
+                // Retirer la classe selected de toutes les cartes
+                taxiCards.forEach(c => c.classList.remove('selected'));
+                
+                // Ajouter la classe selected à la carte cliquée
+                this.classList.add('selected');
+                
+                // Mettre à jour les champs cachés
+                typeTaxiInput.value = this.dataset.taxiType;
+                prixInput.value = this.dataset.price;
+                
+                // Activer le bouton Continuer
+                vehicleNextBtn.disabled = false;
+            });
+        });
+        
+        // Sélection du mode de paiement
+        const paymentOptions = document.querySelectorAll('.payment-option');
+        const paymentMethodInput = document.getElementById('payment_method');
+        
+        paymentOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Retirer la classe selected de toutes les options
+                paymentOptions.forEach(o => o.classList.remove('selected'));
+                
+                // Ajouter la classe selected à l'option cliquée
+                this.classList.add('selected');
+                
+                // Mettre à jour le champ caché
+                paymentMethodInput.value = this.dataset.payment;
+            });
+        });
+        
+        // Navigation entre les étapes
+        const nextButtons = document.querySelectorAll('.next-step');
+        const prevButtons = document.querySelectorAll('.prev-step');
+        
+       // Remplacez la partie du code qui gère le clic sur le bouton "Confirmer la réservation" à l'étape 4
+// Cherchez cette section dans votre script:
+
+nextButtons.forEach(button => {
+    button.addEventListener('click', function() {
+        // Valider l'étape actuelle avant de passer à la suivante
+        if (validateStep(currentStep)) {
+            // Si c'est l'étape 4 (paiement), mettre à jour le récapitulatif
+            if (currentStep === 3) {
+                updateRecap();
+            }
+            
+            // Si c'est la dernière étape, soumettre le formulaire
+            if (currentStep === 4) {
+                // Remplacer cette partie par la soumission du formulaire
+                document.getElementById('taxiReservationForm').submit();
+                return;
+            }
+            
+                    
+                    // Masquer l'étape actuelle
+                    document.getElementById(`formStep${currentStep}`).style.display = 'none';
+                    
+                    // Marquer l'étape actuelle comme complétée
+                    document.getElementById(`step${currentStep}`).classList.remove('active');
+                    document.getElementById(`step${currentStep}`).classList.add('completed');
+                    
+                    // Passer à l'étape suivante
+                    currentStep++;
+                    
+                    // Afficher la nouvelle étape
+                    document.getElementById(`formStep${currentStep}`).style.display = 'block';
+                    document.getElementById(`step${currentStep}`).classList.add('active');
+                }
+            });
+        });
+        
+        prevButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Masquer l'étape actuelle
+                document.getElementById(`formStep${currentStep}`).style.display = 'none';
+                document.getElementById(`step${currentStep}`).classList.remove('active');
+                
+                // Revenir à l'étape précédente
+                currentStep--;
+                
+                // Afficher l'étape précédente
+                document.getElementById(`formStep${currentStep}`).style.display = 'block';
+                document.getElementById(`step${currentStep}`).classList.add('active');
+                document.getElementById(`step${currentStep}`).classList.remove('completed');
+            });
+        });
+        
+        // Fonction pour valider chaque étape
+        function validateStep(step) {
+            switch(step) {
+                case 1:
+                    // Valider les champs de l'étape 1
+                    const depart = document.getElementById('depart').value;
+                    const destination = document.getElementById('destination').value;
+                    const date = document.getElementById('date').value;
+                    const heure = document.getElementById('heure').value;
+                    
+                    if (!depart || !destination || !date || !heure) {
+                        alert('Veuillez remplir tous les champs obligatoires.');
+                        return false;
+                    }
+                    
+                    // Vérifier si aller-retour est coché et valider les champs correspondants
+                    if (allerRetourCheckbox.checked) {
+                        const dateRetour = document.getElementById('date_retour').value;
+                        const heureRetour = document.getElementById('heure_retour').value;
+                        
+                        if (!dateRetour || !heureRetour) {
+                            alert('Veuillez remplir les détails du retour.');
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                    
+                case 2:
+                    // Valider la sélection du type de taxi
+                    if (!typeTaxiInput.value) {
+                        alert('Veuillez sélectionner un type de véhicule.');
+                        return false;
+                    }
+                    return true;
+                    
+                case 3:
+                    // Valider les informations personnelles
+                    const nom = document.getElementById('nom').value;
+                    const prenom = document.getElementById('prenom').value;
+                    const email = document.getElementById('email').value;
+                    const telephone = document.getElementById('telephone').value;
+                    
+                    if (!nom || !prenom || !email || !telephone) {
+                        alert('Veuillez remplir tous les champs obligatoires.');
+                        return false;
+                    }
+                    
+                    // Valider le format de l'email
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(email)) {
+                        alert('Veuillez entrer une adresse email valide.');
+                        return false;
+                    }
+                    
+                    // Valider le format du téléphone (format marocain)
+                    const phoneRegex = /^0[5-7][0-9]{8}$/;
+                    if (!phoneRegex.test(telephone)) {
+                        alert('Veuillez entrer un numéro de téléphone valide (format: 06XXXXXXXX).');
+                        return false;
+                    }
+                    
+                    return true;
+                    
+                case 4:
+                    // Valider les informations de paiement
+                    if (paymentMethodInput.value === 'card') {
+                        const cardNumber = document.getElementById('card_number').value;
+                        const cardName = document.getElementById('card_name').value;
+                        const expiryDate = document.getElementById('expiry_date').value;
+                        const cvv = document.getElementById('cvv').value;
+                        
+                        if (!cardNumber || !cardName || !expiryDate || !cvv) {
+                            alert('Veuillez remplir tous les champs de paiement.');
+                            return false;
+                        }
+                    }
+                    
+                    return true;
+                    
+                default:
+                    return true;
+            }
+        }
+        
+        // Fonction pour mettre à jour le récapitulatif
+        function updateRecap() {
+            document.getElementById('recap-depart').textContent = document.getElementById('depart').value;
+            document.getElementById('recap-destination').textContent = document.getElementById('destination').value;
+            
+            const dateObj = new Date(document.getElementById('date').value);
+            const formattedDate = dateObj.toLocaleDateString('fr-FR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+            document.getElementById('recap-date').textContent = formattedDate;
+            
+            document.getElementById('recap-heure').textContent = document.getElementById('heure').value;
+            document.getElementById('recap-passagers').textContent = document.getElementById('nombre_passagers').value;
+            
+            // Type de véhicule
+            const taxiType = document.getElementById('type_taxi').value;
+            let vehiculeText = '';
+            switch(taxiType) {
+                case 'standard':
+                    vehiculeText = 'Standard';
+                    break;
+                case 'premium':
+                    vehiculeText = 'Premium';
+                    break;
+                case 'familial':
+                    vehiculeText = 'Familial';
+                    break;
+            }
+            document.getElementById('recap-vehicule').textContent = vehiculeText;
+            
+            // Prix
+            const prixBase = parseInt(document.getElementById('prix').value);
+            document.getElementById('recap-prix-base').textContent = prixBase;
+            
+            let prixTotal = prixBase;
+            
+            // Si aller-retour, ajouter le prix du retour
+            if (document.getElementById('aller_retour').checked) {
+                document.getElementById('recap-aller-retour').style.display = 'block';
+                document.getElementById('recap-prix-retour').textContent = prixBase;
+                prixTotal += prixBase;
+            } else {
+                document.getElementById('recap-aller-retour').style.display = 'none';
+            }
+            
+            document.getElementById('recap-prix-total').textContent = prixTotal;
+        }
+    });
+</script>
+{% endblock %}
+
+

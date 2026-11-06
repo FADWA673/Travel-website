@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <!-- Messages de notification -->
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <!-- Ticket de réservation -->
+            <div class="card border-primary mb-4">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3>SAFARIYAT</h3>
+                    <h4>Ticket de Réservation #{{ reservation.id }}</h4>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 text-center mb-4">
+                            <h5>Réservation confirmée</h5>
+                            <p class="text-success">Votre réservation a été enregistrée avec succès!</p>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="bg-light">Départ:</th>
+                                    <td>{{ reservation.depart }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Destination:</th>
+                                    <td>{{ reservation.destination }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Date:</th>
+                                    <td>{{ reservation.date|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Heure:</th>
+                                    <td>{{ reservation.heure }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="col-md-6">
+                            <table class="table table-borderless">
+                                <tr>
+                                    <th class="bg-light">Passagers:</th>
+                                    <td>{{ reservation.nombre_passagers }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Type de taxi:</th>
+                                    <td>{{ reservation.get_type_taxi_display|default:reservation.type_taxi }}</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Prix:</th>
+                                    <td>{{ prix }} DH</td>
+                                </tr>
+                                <tr>
+                                    <th class="bg-light">Statut:</th>
+                                    <td><span class="badge bg-success">{{ reservation.get_statut_display|default:reservation.statut }}</span></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Code QR (optionnel) -->
+                    <div class="row mt-3">
+                        <div class="col-md-12 text-center">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=TAXI-{{ reservation.id }}" alt="QR Code" class="img-fluid" style="max-width: 150px;">
+                            <p class="mt-2 text-muted">Scannez ce code pour vérifier votre réservation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer text-center">
+                    <p class="text-muted mb-0">Merci d'avoir choisi Safariyat pour votre voyage.</p>
+                    <p class="text-muted mb-0">Pour toute assistance, contactez-nous au +212 522 XX XX XX</p>
+                </div>
+            </div>
+            
+            <!-- Boutons d'action -->
+            <div class="row">
+                <div class="col-md-6">
+                    <a href="{% url 'accueil' %}" class="btn btn-outline-primary btn-block">Retour à l'accueil</a>
+                </div>
+                <div class="col-md-6">
+                    <a href="#" onclick="window.print()" class="btn btn-success btn-block">Imprimer le ticket</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

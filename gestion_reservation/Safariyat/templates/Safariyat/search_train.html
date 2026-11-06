@@ -1,0 +1,19 @@
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+      <button type="submit" class="btn btn-primary">Rechercher</button>
+      <a href="{% url 'train_search' %}" class="nav-link">Rechercher /a>
+</form>
+
+{% if results %}
+    <h2>Résultats :</h2>
+    <ul>
+        {% for train in results %}
+            <li>
+                Départ : {{ train.heure_depart }} - Arrivée : {{ train.heure_arrivee }}<br>
+                Durée : {{ train.duree }} - Prix : {{ train.prix }}
+            </li>
+        {% endfor %}
+    </ul>
+    
+{% endif %}

@@ -1,0 +1,46 @@
+Bonjour,
+
+Nous vous remercions pour votre réservation avec Safariyat.
+
+Veuillez trouver ci-joint votre ticket de réservation.
+
+Détails de la réservation:
+- Numéro de réservation: #{{ reservation.id }}
+{% if reservation.depart %}
+- Départ: {{ reservation.depart }}
+{% elif reservation.trajet %}
+- Départ: {{ reservation.trajet.ville_depart }}
+{% endif %}
+{% if reservation.destination %}
+- Destination: {{ reservation.destination }}
+{% elif reservation.trajet %}
+- Destination: {{ reservation.trajet.ville_arrivee }}
+{% endif %}
+{% if reservation.date %}
+- Date: {{ reservation.date|date:"d/m/Y" }}
+{% elif reservation.date_voyage %}
+- Date: {{ reservation.date_voyage|date:"d/m/Y" }}
+{% endif %}
+{% if reservation.heure %}
+- Heure: {{ reservation.heure }}
+{% elif reservation.trajet.heure_depart %}
+- Heure: {{ reservation.trajet.heure_depart|time:"H:i" }}
+{% endif %}
+{% if reservation.nombre_passagers %}
+- Nombre de passagers: {{ reservation.nombre_passagers }}
+{% endif %}
+{% if reservation.type_taxi %}
+- Type de véhicule: {{ reservation.get_type_taxi_display }}
+{% elif reservation.trajet.autobus.type_bus %}
+- Type de véhicule: {{ reservation.trajet.autobus.type_bus }}
+{% endif %}
+{% if reservation.prix_total %}
+- Prix estimé: {{ reservation.prix_total }} DH
+{% endif %}
+{% if reservation.statut %}
+- Statut: {{ reservation.get_statut_display }}
+{% endif %}
+
+Nous vous souhaitons un excellent voyage!
+
+L'équipe Safariyat

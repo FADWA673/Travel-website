@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4">Paiement de votre réservation</h1>
+    
+    <div class="row">
+        <div class="col-md-5">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Détails de la réservation</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Compagnie:</strong> {{ compagnie.nom }}</p>
+                    <p><strong>Trajet:</strong> {{ trajet.ville_depart }} → {{ trajet.ville_arrivee }}</p>
+                    <p><strong>Date:</strong> {{ reservation.date_voyage|default:"Aujourd'hui" }}</p>
+                    <p><strong>Heure de départ:</strong> {{ trajet.heure_depart }}</p>
+                    <p><strong>Heure d'arrivée:</strong> {{ trajet.heure_arrivee }}</p>
+                    <p><strong>Nombre de passagers:</strong> {{ reservation.nombre_passagers }}</p>
+                    <p><strong>Prix par passager:</strong> {{ prix_unitaire }} DH</p>
+                    <p><strong>Prix total:</strong> {{ prix_total }} DH</p>
+                </div>
+            </div>
+            
+            <div class="alert alert-info">
+                <h5><i class="fas fa-info-circle"></i> Informations importantes</h5>
+                <ul class="mb-0">
+                    <li>Présentez-vous 30 minutes avant le départ</li>
+                    <li>Pièce d'identité obligatoire pour l'embarquement</li>
+                    <li>Bagages limités à 2 par personne</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="col-md-7">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Choisissez votre mode de paiement</h5>
+                </div>
+                <div class="card-body">
+                    <ul class="nav nav-tabs" id="paymentTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="card-tab" data-bs-toggle="tab" data-bs-target="#card-payment" type="button" role="tab" aria-controls="card-payment" aria-selected="true">
+                                <i class="fas fa-credit-card me-2"></i>Carte bancaire
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="counter-tab" data-bs-toggle="tab" data-bs-target="#counter-payment" type="button" role="tab" aria-controls="counter-payment" aria-selected="false">
+                                <i class="fas fa-money-bill-wave me-2"></i>Paiement au comptoir
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content mt-3" id="paymentTabsContent">
+                        <!-- Paiement par carte -->
+                        <div class="tab-pane fade show active" id="card-payment" role="tabpanel" aria-labelledby="card-tab">
+                            <form method="post" action="{% url 'confirmation_finale' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="payment_method" value="card">
+                                
+                                <div class="form-group mb-3">
+                                    <label for="nom_carte">Nom sur la carte</label>
+                                    <input type="text" class="form-control" id="nom_carte" name="nom_carte" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="numero_carte">Numéro de carte</label>
+                                    <input type="text" class="form-control" id="numero_carte" name="numero_carte" placeholder="XXXX XXXX XXXX XXXX" required>
+                                </div>
+                                
+                                <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <label for="date_expiration">Date d'expiration</label>
+                                        <input type="text" class="form-control" id="date_expiration" name="date_expiration" placeholder="MM/AA" required>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="cvv">CVV</label>
+                                        <input type="text" class="form-control" id="cvv" name="cvv" placeholder="123" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="email">Email pour la confirmation</label>
+                                    <input type="email" class="form-control" id="email" name="email" required>
+                                </div>
+                                
+                                <div class="alert alert-info">
+                                    <small>Ceci est une démo. Aucun paiement réel ne sera effectué.</small>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-primary btn-lg">Payer {{ prix_total }} DH</button>
+                                </div>
+                            </form>
+                        </div>
+                        
+                        <!-- Paiement au comptoir -->
+                        <div class="tab-pane fade" id="counter-payment" role="tabpanel" aria-labelledby="counter-tab">
+                            <form method="post" action="{% url 'confirmation_finale' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="payment_method" value="counter">
+                                
+                                <div class="alert alert-warning mb-4">
+                                    <h5><i class="fas fa-exclamation-triangle"></i> Important</h5>
+                                    <p>En choisissant le paiement au comptoir, vous devrez vous présenter au guichet de la compagnie <strong>au moins 1 heure avant le départ</strong> pour effectuer votre paiement et récupérer votre billet.</p>
+                                    <p class="mb-0">Votre réservation sera maintenue pendant <strong>24 heures</strong>. Passé ce délai, elle sera automatiquement annulée.</p>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="nom_complet">Nom complet</label>
+                                    <input type="text" class="form-control" id="nom_complet" name="nom_complet" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="telephone">Numéro de téléphone</label>
+                                    <input type="tel" class="form-control" id="telephone" name="telephone" placeholder="0600000000" required>
+                                </div>
+                                
+                                <div class="form-group mb-3">
+                                    <label for="email_counter">Email pour la confirmation</label>
+                                    <input type="email" class="form-control" id="email_counter" name="email" required>
+                                </div>
+                                
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" id="terms" name="terms" required>
+                                    <label class="form-check-label" for="terms">
+                                        J'accepte les conditions de réservation et je m'engage à payer au comptoir avant le départ
+                                    </label>
+                                </div>
+                                
+                                <div class="d-grid gap-2">
+                                    <button type="submit" class="btn btn-warning btn-lg">Réserver et payer au comptoir</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="mt-4">
+        <a href="{% url 'disponibilites' %}" class="btn btn-secondary">Retour aux disponibilités</a>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Validation du formulaire de carte bancaire
+    document.addEventListener('DOMContentLoaded', function() {
+        const cardForm = document.querySelector('#card-payment form');
+        if (cardForm) {
+            cardForm.addEventListener('submit', function(e) {
+                const cardNumber = document.getElementById('numero_carte').value;
+                const expDate = document.getElementById('date_expiration').value;
+                const cvv = document.getElementById('cvv').value;
+                
+                // Validation basique du numéro de carte
+                if (!/^\d{7}$/.test(cardNumber.replace(/\s/g, ''))) {
+                    alert('Veuillez entrer un numéro de carte valide (7 chiffres)');
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Validation de la date d'expiration (format MM/AA)
+                if (!/^\d{2}\/\d{2}$/.test(expDate)) {
+                    alert('Veuillez entrer une date d\'expiration valide (MM/AA)');
+                    e.preventDefault();
+                    return false;
+                }
+                
+                // Validation du CVV (3 ou 4 chiffres)
+                if (!/^\d{3,4}$/.test(cvv)) {
+                    alert('Veuillez entrer un CVV valide (3 ou 4 chiffres)');
+                    e.preventDefault();
+                    return false;
+                }
+            });
+        }
+    });
+</script>
+{% endblock %}

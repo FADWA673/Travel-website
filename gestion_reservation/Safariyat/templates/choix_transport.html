@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Choisissez votre moyen de transport</h1>
+
+    <div class="row justify-content-center mb-4">
+        <div class="col-md-8">
+            <p class="lead text-center">
+                Trouvez le transport idéal pour votre prochain voyage.
+                Que vous préfériez le confort d'un bus, la rapidité d'un train,
+                ou la flexibilité d'un taxi, nous avons ce qu'il vous faut.
+            </p>
+        </div>
+    </div>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6 animate-on-scroll" data-animation="animate__fadeInUp" data-delay="0.2s">
+                    <div class="transport-card">
+                        <img src="{% static 'images/autobus.jpeg' %}" alt="Autobus" class="transport-img">
+                        <div class="card-body">
+                            <h5 class="card-title">Autobus</h5>
+                            <p class="card-text">
+                                Voyagez confortablement à travers le Maroc avec nos partenaires de bus.
+                                Profitez de sièges spacieux et de vues panoramiques.
+                            </p>
+                            <div class="transport-features">
+                                <div class="transport-icon bg-success">
+                                    <i class="bi bi-people-fill text-white"></i>
+                                </div>
+                                <div class="transport-icon bg-info">
+                                    <i class="bi bi-clock-fill text-white"></i>
+                                </div>
+                                </div>
+                            <a href="{% url 'compagnies_autobus' %}" class="btn btn-primary w-100">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Réserver un bus
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 animate-on-scroll" data-animation="animate__fadeInUp" data-delay="0.4s">
+                    <div class="transport-card">
+                        <img src="{% static 'images/train.jpeg' %}" alt="Train" class="transport-img">
+                        <div class="card-body">
+                            <h5 class="card-title">Train</h5>
+                            <p class="card-text">
+                                Découvrez le Maroc à grande vitesse. Nos trains modernes vous offrent
+                                une expérience de voyage rapide et efficace.
+                            </p>
+                            <div class="transport-features">
+                                <div class="transport-icon bg-warning">
+                                    <i class="bi bi-speedometer2 text-dark"></i>
+                                </div>
+                                <div class="transport-icon bg-primary">
+                                    <i class="bi bi-wifi text-white"></i>
+                                </div>
+                                </div>
+                            <a href="{% url 'reservation_train' %}" class="btn btn-info w-100 text-white">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Réserver un train
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6 animate-on-scroll" data-animation="animate__fadeInUp" data-delay="0.6s">
+                    <div class="transport-card">
+                        <img src="{% static 'images/ttt.jpg' %}" alt="Taxi" class="transport-img">
+                        <div class="card-body">
+                            <h5 class="card-title">Taxi</h5>
+                            <p class="card-text">
+                                Profitez d'un service personnalisé et flexible. Nos taxis vous emmènent
+                                directement à votre destination, sans détours.
+                            </p>
+                            <div class="transport-features">
+                                <div class="transport-icon bg-danger">
+                                    <i class="bi bi-geo-alt-fill text-white"></i>
+                                </div>
+                                <div class="transport-icon bg-secondary">
+                                    <i class="bi bi-cash-coin text-white"></i>
+                                </div>
+                                </div>
+                            <a href="{% url 'reserver_taxi' %}" class="btn btn-success w-100">
+                                <i class="bi bi-arrow-right-circle me-2"></i>Réserver un taxi
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="mt-5 pt-4">
+        <div class="card border-0 shadow-sm rounded-4 animate-on-scroll" data-animation="animate__fadeIn">
+            <div class="card-body p-4">
+                <h3 class="mb-4">Comment choisir le transport idéal ?</h3>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col">Critère</th>
+                                <th scope="col">Autobus</th>
+                                <th scope="col">Taxi</th>
+                                <th scope="col">Train</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Prix</th>
+                                <td>
+                                    <i class="bi bi-currency-exchange text-success me-2"></i>Économique
+                                </td>
+                                <td>
+                                    <i class="bi bi-currency-exchange text-danger me-2"></i>Plus cher
+                                </td>
+                                <td>
+                                    <i class="bi bi-currency-exchange text-warning me-2"></i>Modéré
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Vitesse</th>
+                                <td>
+                                    <i class="bi bi-speedometer2 text-warning me-2"></i>Modérée
+                                </td>
+                                <td>
+                                    <i class="bi bi-speedometer2 text-success me-2"></i>Rapide
+                                </td>
+                                <td>
+                                    <i class="bi bi-speedometer2 text-success me-2"></i>Rapide
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Confort</th>
+                                <td>
+                                    <i class="bi bi-check-lg text-success me-2"></i>Bon
+                                </td>
+                                <td>
+                                    <i class="bi bi-check-lg text-success me-2"></i>Excellent
+                                </td>
+                                <td>
+                                    <i class="bi bi-check-lg text-success me-2"></i>Très bon
+                                </td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Flexibilité</th>
+                                <td>
+                                    <i class="bi bi-x-lg text-danger me-2"></i>Limitée
+                                </td>
+                                <td>
+                                    <i class="bi bi-check-lg text-success me-2"></i>Élevée
+                                </td>
+                                <td>
+                                    <i class="bi bi-x-lg text-danger me-2"></i>Limitée
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'javascript/modern-script.js' %}"></script>
+{% endblock %}

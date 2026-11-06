@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    environment:
+      - DEBUG=False
+      - DB_HOST=db
+      - DB_NAME=gestion_stock
+      - DB_USER=root
+      - DB_PASSWORD=rootpassword
+    volumes:
+      - .:/app
+      - static_volume:/app/staticfiles
+      - media_volume:/app/media
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_DATABASE: gestion_stock
+      MYSQL_ROOT_PASSWORD:
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+volumes:
+  mysql_data:
+  static_volume:
+  media_volume:

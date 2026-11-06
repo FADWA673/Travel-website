@@ -1,0 +1,96 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Annuler une réservation - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-danger text-white py-3">
+                    <h1 class="h3 mb-0">Annuler votre réservation</h1>
+                </div>
+                <div class="card-body p-4">
+                    <!-- Détails de la réservation -->
+                    <div class="alert alert-info mb-4">
+                        <h4 class="alert-heading h5">Détails de la réservation</h4>
+                        <hr>
+                        <div class="row">
+                            <div class="col-md-6">
+                                {% if type_reservation == 'taxi' %}
+                                    <p><strong>Type:</strong> <span class="badge bg-warning">Taxi</span></p>
+                                    <p><strong>Départ:</strong> {{ reservation.depart }}</p>
+                                    <p><strong>Destination:</strong> {{ reservation.destination }}</p>
+                                    <p><strong>Date:</strong> {{ reservation.date|date:"d/m/Y" }}</p>
+                                    <p><strong>Heure:</strong> {{ reservation.heure }}</p>
+                                {% elif type_reservation == 'bus' %}
+                                    <p><strong>Type:</strong> <span class="badge bg-info">Bus</span></p>
+                                    <p><strong>Départ:</strong> {{ reservation.trajet.ville_depart }}</p>
+                                    <p><strong>Destination:</strong> {{ reservation.trajet.ville_arrivee }}</p>
+                                    <p><strong>Date:</strong> {{ reservation.date_voyage|date:"d/m/Y" }}</p>
+                                    <p><strong>Heure:</strong> {{ reservation.trajet.heure_depart }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <p><strong>Passagers:</strong> {{ reservation.nombre_passagers }}</p>
+                                {% if type_reservation == 'taxi' %}
+                                    <p><strong>Type de véhicule:</strong> {{ reservation.get_type_taxi_display }}</p>
+                                {% elif type_reservation == 'bus' %}
+                                    <p><strong>Compagnie:</strong> {{ reservation.trajet.autobus.compagnie.nom }}</p>
+                                {% endif %}
+                                <p><strong>Prix total:</strong> {{ reservation.prix_total }} DH</p>
+                                <p><strong>Statut:</strong> <span class="badge bg-success">{{ reservation.get_statut_display }}</span></p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Politique d'annulation -->
+                    <div class="alert {% if pourcentage_remboursement > 0 %}alert-success{% else %}alert-warning{% endif %} mb-4">
+                        <h4 class="alert-heading h5">Politique d'annulation</h4>
+                        <hr>
+                        <p>{{ message }}</p>
+                        {% if pourcentage_remboursement > 0 %}
+                            <p class="mb-0"><strong>Montant remboursé:</strong> {{ reservation.prix_total|floatformat:2|multiply:pourcentage_remboursement|divide:100 }} DH ({{ pourcentage_remboursement }}%)</p>
+                        {% else %}
+                            <p class="mb-0"><strong>Montant remboursé:</strong> 0 DH (0%)</p>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Formulaire d'annulation -->
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.raison.id_for_label }}" class="form-label">{{ form.raison.label }}</label>
+                            {{ form.raison }}
+                            {% if form.raison.help_text %}
+                                <div class="form-text">{{ form.raison.help_text }}</div>
+                            {% endif %}
+                            {% if form.raison.errors %}
+                                <div class="invalid-feedback">{{ form.raison.errors }}</div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="confirmAnnulation" required>
+                            <label class="form-check-label" for="confirmAnnulation">
+                                Je confirme vouloir annuler cette réservation
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'historique' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-1"></i>Retour
+                            </a>
+                            <button type="submit" class="btn btn-danger">
+                                <i class="bi bi-x-circle me-1"></i>Annuler la réservation
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,356 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Safariyat - Réservation de billets de transport{% endblock %}
+
+{% block content %}
+<!-- Hero Section avec animation et appel à l'action -->
+<section class="hero-section position-relative">
+    <div class="hero-overlay"></div>
+    <div class="container py-5">
+        <div class="row align-items-center py-5">
+            <div class="col-lg-6 text-white hero-content">
+                <h1 class="display-4 fw-bold mb-4 animate__animated animate__fadeInUp">Voyagez en toute simplicité</h1>
+                <p class="lead mb-4 animate__animated animate__fadeInUp animate__delay-1s">
+                    Réservez vos billets de transport au Maroc en quelques clics. Train, taxi ou autobus, 
+                    choisissez votre mode de transport idéal pour votre prochain voyage.
+                </p>
+                <div class="d-flex gap-3 animate__animated animate__fadeInUp animate__delay-2s">
+                    <a href="{% url 'choix_transport' %}" class="btn btn-primary btn-lg">Réserver maintenant</a>
+                    <a href="#partenaires" class="btn btn-outline-light btn-lg">Nos partenaires</a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block animate__animated animate__fadeInRight animate__delay-1s">
+                <img src="{% static 'images/trajet.jpg' %}" class="img-fluid rounded-4 shadow-lg" alt="Voyage au Maroc">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section de recherche rapide -->
+<section class="search-section py-5">
+    <div class="container">
+        <div class="card border-0 shadow-lg rounded-4 search-card">
+            <div class="card-body p-4">
+                <h2 class="text-center mb-4">Recherche rapide</h2>
+                <form class="row g-3">
+                    <div class="col-md-3">
+                        <label for="depart" class="form-label">Départ</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-geo-alt-fill"></i></span>
+                            <input type="text" class="form-control" id="depart" placeholder="Ville de départ">
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="destination" class="form-label">Destination</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-geo-alt-fill"></i></span>
+                            <input type="text" class="form-control" id="destination" placeholder="Ville d'arrivée">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="date" class="form-label">Date</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-calendar-event"></i></span>
+                            <input type="date" class="form-control" id="date">
+                        </div>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="passagers" class="form-label">Passagers</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-primary text-white"><i class="bi bi-person-fill"></i></span>
+                            <select class="form-select" id="passagers">
+                                <option value="1">1 passager</option>
+                                <option value="2">2 passagers</option>
+                                <option value="3">3 passagers</option>
+                                <option value="4">4 passagers</option>
+                                <option value="5">5+ passagers</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-flex align-items-end">
+                        <button type="submit" class="btn btn-primary w-100 py-2">
+                            <i class="bi bi-search me-2"></i>Rechercher
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section des options de transport avec cartes améliorées -->
+<section class="transport-options py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-2">Nos services de transport</h2>
+        <p class="text-center text-muted mb-5">Choisissez le mode de transport qui vous convient le mieux</p>
+        
+        <div class="row g-4">
+            <!-- Train -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm transport-card">
+                    <div class="card-img-overlay-wrapper">
+                        <img src="{% static 'images/train.jpeg' %}" class="card-img-top transport-img" alt="Train">
+                        <div class="card-img-overlay d-flex align-items-end">
+                            <h3 class="text-white mb-0 transport-title">Train</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Voyagez confortablement et rapidement entre les principales villes du Maroc avec l'ONCF.</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Horaires réguliers</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Confort optimal</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Tarifs avantageux</li>
+                        </ul>
+                        <a href="{% url 'reservation_train' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-train-front me-2">Réserver un train</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Taxi -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm transport-card">
+                    <div class="card-img-overlay-wrapper">
+                        <img src="{% static 'images/taxi.jpeg' %}" class="card-img-top transport-img" alt="Taxi">
+                        <div class="card-img-overlay d-flex align-items-end">
+                            <h3 class="text-white mb-0 transport-title">Taxi</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Service de taxi personnalisé pour vos déplacements urbains ou interurbains.</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Disponible 24/7</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Service porte-à-porte</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Chauffeurs professionnels</li>
+                        </ul>
+                        <a href="{% url 'reserver_taxi' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-taxi-front me-2" >Réserver un taxi</i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Autobus -->
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm transport-card">
+                    <div class="card-img-overlay-wrapper">
+                        <img src="{% static 'images/autobus.jpeg' %}" class="card-img-top transport-img" alt="Autobus">
+                        <div class="card-img-overlay d-flex align-items-end">
+                            <h3 class="text-white mb-0 transport-title">Autobus</h3>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Voyagez économiquement avec nos compagnies d'autobus partenaires à travers le Maroc.</p>
+                        <ul class="list-unstyled mb-4">
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Nombreuses destinations</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Prix compétitifs</li>
+                            <li><i class="bi bi-check-circle-fill text-success me-2"></i>Multiples compagnies</li>
+                        </ul>
+                        <a href="{% url 'compagnies_autobus' %}" class="btn btn-outline-primary w-100">
+                            <i class="bi bi-bus-front me-2"></i>Réserver un autobus
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section des avantages avec icônes -->
+<section class="features-section py-5">
+    <div class="container">
+        <h2 class="text-center mb-2">Pourquoi choisir Safariyat ?</h2>
+        <p class="text-center text-muted mb-5">Nous vous offrons la meilleure expérience de réservation</p>
+        
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-primary text-white mb-3">
+                        <i class="bi bi-lightning-charge-fill"></i>
+                    </div>
+                    <h4>Rapide</h4>
+                    <p class="text-muted">Réservez en quelques clics, sans attente ni file d'attente.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-primary text-white mb-3">
+                        <i class="bi bi-shield-check"></i>
+                    </div>
+                    <h4>Sécurisé</h4>
+                    <p class="text-muted">Paiements sécurisés et protection de vos données personnelles.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-primary text-white mb-3">
+                        <i class="bi bi-cash-coin"></i>
+                    </div>
+                    <h4>Économique</h4>
+                    <p class="text-muted">Comparez les prix et trouvez les meilleures offres disponibles.</p>
+                </div>
+            </div>
+            
+            <div class="col-md-3">
+                <div class="feature-card text-center p-4">
+                    <div class="feature-icon bg-primary text-white mb-3">
+                        <i class="bi bi-headset"></i>
+                    </div>
+                    <h4>Support 24/7</h4>
+                    <p class="text-muted">Notre équipe est disponible pour vous aider à tout moment.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Section des témoignages avec carousel -->
+<section class="testimonials-section py-5 bg-light">
+    <div class="container">
+        <h2 class="text-center mb-2">Ce que disent nos clients</h2>
+        <p class="text-center text-muted mb-5">Découvrez les expériences de nos utilisateurs</p>
+        
+        <div id="testimonialCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <div class="testimonial-card mx-auto text-center p-4 bg-white shadow-sm rounded-4">
+                        <div class="testimonial-rating mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="testimonial-text mb-4">"Service exceptionnel ! J'ai pu réserver mon billet de train rapidement et sans problème. Je recommande vivement Safariyat pour tous vos voyages au Maroc."</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-1">Marie Dupont</h5>
+                            <p class="text-muted mb-0">Casablanca</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="testimonial-card mx-auto text-center p-4 bg-white shadow-sm rounded-4">
+                        <div class="testimonial-rating mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-half text-warning"></i>
+                        </div>
+                        <p class="testimonial-text mb-4">"Très pratique pour comparer les différentes options de transport. L'interface est intuitive et le service client réactif. Je l'utilise pour tous mes déplacements professionnels."</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-1">Youssef Alami</h5>
+                            <p class="text-muted mb-0">Rabat</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <div class="testimonial-card mx-auto text-center p-4 bg-white shadow-sm rounded-4">
+                        <div class="testimonial-rating mb-3">
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                            <i class="bi bi-star-fill text-warning"></i>
+                        </div>
+                        <p class="testimonial-text mb-4">"J'ai réservé un taxi pour ma famille et tout s'est parfaitement déroulé. Le chauffeur était ponctuel et professionnel. Merci Safariyat pour ce service de qualité !"</p>
+                        <div class="testimonial-author">
+                            <h5 class="mb-1">Fatima Benali</h5>
+                            <p class="text-muted mb-0">Marrakech</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#testimonialCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Suivant</span>
+            </button>
+            <div class="carousel-indicators position-relative mt-3">
+                <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="0" class="active bg-primary" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="1" class="bg-primary" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#testimonialCarousel" data-bs-slide-to="2" class="bg-primary" aria-label="Slide 3"></button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Section des partenaires avec logos -->
+<section class="partners-section py-5" id="partenaires">
+    <div class="container">
+        <h2 class="text-center mb-2">Nos compagnies partenaires</h2>
+        <p class="text-center text-muted mb-5">Nous collaborons avec les meilleures compagnies de transport au Maroc</p>
+        
+        <div class="row align-items-center justify-content-center g-4" >
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/ctm.png' %}" alt="CTM" class="img-fluid"  this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/ghazala.png' %}" alt="Ghazala" class="img-fluid" this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/itrane.png' %}" alt="Itrane" class="img-fluid"  this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/sahara.png' %}" alt="Sahara Prestige" class="img-fluid" this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/asfar.png' %}" alt="Asfar Tissir" class="img-fluid"  this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/oncf.png' %}" alt="Oncf" class="img-fluid"  this.style.maxHeight='60px';>
+                </div>
+            </div>
+            <div class="col-6 col-md-2">
+                <div class="partner-logo text-center">
+                    <img src="{% static 'images/taxi.jpeg' %}" alt="Taxi" class="img-fluid"  this.style.maxHeight='60px';>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- Section de téléchargement de l'application -->
+<section class="app-download-section py-5 bg-primary text-white">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <h2 class="mb-4">Téléchargez notre application mobile</h2>
+                <p class="lead mb-4">Réservez vos billets où que vous soyez et accédez à vos réservations même hors ligne.</p>
+                <div class="d-flex gap-3">
+                    <a href="#" class="app-download-btn">
+                        <img src="{% static 'images/appstore.jpeg' %}" alt="App Store" height="50">
+                    </a>
+                    <a href="#" class="app-download-btn">
+                        <img src="{% static 'images/google play.png' %}" alt="Google Play" height="50">
+                    </a>
+                </div>
+            </div>
+            <div class="col-lg-6 d-none d-lg-block text-center">
+                <img src="{% static 'images/safariyat.png' %}" alt="Application mobile Safariyat" class="img-fluid app-mockup"  this.style.maxHeight='300px';>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

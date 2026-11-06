@@ -1,0 +1,38 @@
+{
+  "cities": [
+    "CASABLANCA",
+    "MEKNES",
+    "MARRAKECH",
+    "TANGER",
+    "RABAT",
+    "FES"
+  ],
+  "distances": {
+    "CASABLANCA-RABAT": 87,
+    "CASABLANCA-MARRAKECH": 242,
+    "CASABLANCA-TANGER": 338,
+    "CASABLANCA-FES": 246,
+    "CASABLANCA-MEKNES": 200,
+    "RABAT-MARRAKECH": 324,
+    "RABAT-TANGER": 250,
+    "RABAT-FES": 201,
+    "RABAT-MEKNES": 139,
+    "MARRAKECH-FES": 530,
+    "MARRAKECH-MEKNES": 460,
+    "MARRAKECH-TANGER": 580,
+    "FES-TANGER": 399,
+    "FES-MEKNES": 61,
+    "MEKNES-TANGER": 338
+  },
+  "aliases": {
+    "CASA": "CASABLANCA",
+    "CASA PORT": "CASABLANCA",
+    "CASABLANCA VOYAGEURS": "CASABLANCA",
+    "RABAT VILLE": "RABAT",
+    "RABAT AGDAL": "RABAT",
+    "MARRAKECH GARE": "MARRAKECH",
+    "FES VILLE": "FES",
+    "MEKNES VILLE": "MEKNES",
+    "TANGER VILLE": "TANGER"
+  }
+}

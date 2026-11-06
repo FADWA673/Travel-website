@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Débogage des réservations de train - Safariyat{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-header bg-primary text-white py-3">
+                    <h1 class="h3 mb-0">Débogage des réservations de train</h1>
+                </div>
+                <div class="card-body p-4">
+                    <h2 class="h4 mb-3">État de la connexion à la base de données</h2>
+                    <div class="alert {% if db_connection_ok %}alert-success{% else %}alert-danger{% endif %} mb-4">
+                        {% if db_connection_ok %}
+                            <i class="bi bi-check-circle-fill me-2"></i>La connexion à la base de données est active.
+                        {% else %}
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Problème de connexion à la base de données.
+                        {% endif %}
+                    </div>
+                    
+                    <h2 class="h4 mb-3">Réservations de train</h2>
+                    <div class="alert {% if train_reservations_count > 0 %}alert-info{% else %}alert-warning{% endif %} mb-4">
+                        <p><strong>Nombre total de réservations de train:</strong> {{ train_reservations_count }}</p>
+                    </div>
+                    
+                    <h2 class="h4 mb-3">Créer une réservation de test</h2>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" name="create_test" class="btn btn-primary">
+                            <i class="bi bi-plus-circle me-1"></i>Créer une réservation de test
+                        </button>
+                    </form>
+                    
+                    {% if test_reservation_id %}
+                        <div class="alert alert-success mt-3">
+                            <p><strong>Réservation de test créée avec succès!</strong></p>
+                            <p>ID de la réservation: {{ test_reservation_id }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    <h2 class="h4 mt-4 mb-3">Vérifier les tables de la base de données</h2>
+                    <div class="alert alert-info">
+                        <p>Pour vérifier directement les tables de la base de données, utilisez phpMyAdmin ou un autre outil de gestion de base de données.</p>
+                        <p>Tables à vérifier:</p>
+                        <ul>
+                            <li><code>Safariyat_trainreservation</code> - Table principale des réservations de train</li>
+                            <li><code>Safariyat_reservation</code> - Table générale des réservations</li>
+                            <li><code>Safariyat_client</code> - Table des clients</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
